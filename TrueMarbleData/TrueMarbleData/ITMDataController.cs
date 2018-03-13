@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace TrueMarbleData
 {
     [ServiceContract]
-    interface ITMDataController
+    public interface ITMDataController
     {
         [OperationContract]
         int GetTileWidth();

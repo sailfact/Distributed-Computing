@@ -1,5 +1,6 @@
 ﻿using System.ServiceModel;
 using System.Windows;
+using TrueMarbleData;
 
 namespace TrueMarbleGUI
 {

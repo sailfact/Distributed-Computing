@@ -5,21 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueMarbleGUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
+        Title="MainWindow" Height="378.432" Width="611.274" Loaded="Window_Loaded">
     <Grid Loaded="Grid_Loaded">
         <Button x:Name="btnLoad" Content="_Load Tile" HorizontalAlignment="Center" Margin="410,0,32,23" VerticalAlignment="Bottom" Width="75" RenderTransformOrigin="-1.24,0.378" Click="BtnLoad_Click"/>
         <Image x:Name="imgTile" HorizontalAlignment="Stretch" Margin="110,35,77,63" VerticalAlignment="Stretch"/>
-        <Button x:Name="btnWest" Content="_West" HorizontalAlignment="Left" Margin="65,134,0,165" VerticalAlignment="Center" Width="40" Click="BtnWest_Click"/>
-        <Button x:Name="btnNorth" Content="_North" HorizontalAlignment="Center" Margin="255,10,222,0" VerticalAlignment="Top" Width="40" RenderTransformOrigin="1.826,0.797" Click="BtnNorth_Click"/>
-        <Button x:Name="btnEast" Content="_East" HorizontalAlignment="Right" Margin="0,134,19,165" VerticalAlignment="Center" Width="40" Click="BtnEast_Click"/>
-        <Button x:Name="btnSouth" Content="_South" HorizontalAlignment="Center" Margin="255,0,222,23" VerticalAlignment="Bottom" Width="40" Click="BtnSouth_Click"/>
-        <Slider x:Name="sldZoom" HorizontalAlignment="Left" Margin="-114,143,0,148" Height="28" Width="275" RenderTransformOrigin="0.5,0.5" Minimum="0" Maximum="6" ValueChanged="BldZoom_ValueChanged" TickPlacement="TopLeft" IsEnabled="False" IsDirectionReversed="True">
+        <Button x:Name="btnWest" Content="_West" HorizontalAlignment="Left" Margin="65,135,0,180" VerticalAlignment="Center" Width="45" Click="BtnWest_Click" Height="25"/>
+        <Button x:Name="btnNorth" Content="_North" HorizontalAlignment="Center" Margin="275,10,253,0" VerticalAlignment="Top" Width="67" RenderTransformOrigin="1.826,0.797" Click="BtnNorth_Click" Height="25"/>
+        <Button x:Name="btnEast" Content="_East" HorizontalAlignment="Right" Margin="0,135,30,180" VerticalAlignment="Center" Width="47" Click="BtnEast_Click" Height="25"/>
+        <Button x:Name="btnSouth" Content="_South" HorizontalAlignment="Center" Margin="275,0,253,39" VerticalAlignment="Bottom" Width="67" Click="BtnSouth_Click" Height="24"/>
+        <Slider x:Name="sldZoom" HorizontalAlignment="Left" Margin="-114,142,0,140" Width="272" RenderTransformOrigin="0.527,1.072" Minimum="0" Maximum="6" ValueChanged="BldZoom_ValueChanged" TickPlacement="TopLeft" IsEnabled="False" IsDirectionReversed="True" Cursor="Arrow" TickFrequency="1" Foreground="#FF00000A" OpacityMask="#FF3153EA">
             <Slider.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform Angle="90.00"/>
-                    <TranslateTransform/>
+                    <TranslateTransform X="-44.524" Y="-29.836"/>
                 </TransformGroup>
             </Slider.RenderTransform>
         </Slider>

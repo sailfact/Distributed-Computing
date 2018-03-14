@@ -7,8 +7,21 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
     <Grid Loaded="Grid_Loaded">
-        <Button x:Name="btnLoad" Content="_Load Tile" HorizontalAlignment="Center" Margin="0,0,0,12" VerticalAlignment="Bottom" Width="75" RenderTransformOrigin="-1.24,0.378"/>
-        <Image x:Name="imgTile" HorizontalAlignment="Stretch" Margin="70,50,70,60" VerticalAlignment="Stretch"/>
-
+        <Button x:Name="btnLoad" Content="_Load Tile" HorizontalAlignment="Center" Margin="410,0,32,23" VerticalAlignment="Bottom" Width="75" RenderTransformOrigin="-1.24,0.378" Click="BtnLoad_Click"/>
+        <Image x:Name="imgTile" HorizontalAlignment="Stretch" Margin="110,35,77,63" VerticalAlignment="Stretch"/>
+        <Button x:Name="btnWest" Content="_West" HorizontalAlignment="Left" Margin="65,134,0,165" VerticalAlignment="Center" Width="40" Click="BtnWest_Click"/>
+        <Button x:Name="btnNorth" Content="_North" HorizontalAlignment="Center" Margin="255,10,222,0" VerticalAlignment="Top" Width="40" RenderTransformOrigin="1.826,0.797" Click="BtnNorth_Click"/>
+        <Button x:Name="btnEast" Content="_East" HorizontalAlignment="Right" Margin="0,134,19,165" VerticalAlignment="Center" Width="40" Click="BtnEast_Click"/>
+        <Button x:Name="btnSouth" Content="_South" HorizontalAlignment="Center" Margin="255,0,222,23" VerticalAlignment="Bottom" Width="40" Click="BtnSouth_Click"/>
+        <Slider x:Name="sldZoom" HorizontalAlignment="Left" Margin="-114,143,0,148" Height="28" Width="275" RenderTransformOrigin="0.5,0.5" Minimum="0" Maximum="6" ValueChanged="BldZoom_ValueChanged" TickPlacement="TopLeft" IsEnabled="False" IsDirectionReversed="True">
+            <Slider.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="90.00"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Slider.RenderTransform>
+        </Slider>
     </Grid>
 </Window>

@@ -13,6 +13,9 @@ namespace TrueMarbleGUI
     public partial class MainWindow : Window
     {
         private ITMDataController m_tmData;
+        private int m_zoom;
+        private int m_xValue;
+        private int m_yValue;
 
         public MainWindow()
         {
@@ -22,27 +25,24 @@ namespace TrueMarbleGUI
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             ChannelFactory<ITMDataController> channelFactory;
-            JpegBitmapDecoder decoder;
-            MemoryStream memoryStream;
 
             NetTcpBinding tcpBinding = new NetTcpBinding();
             string url = "net.tcp://localhost:50001/TMData";
 
             tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
             tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
+            
+            channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);
 
-            try
-            {
-                channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);
+            m_tmData = channelFactory.CreateChannel();
+        }
 
-                m_tmData = channelFactory.CreateChannel();
+        private void BtnLoad_Click(object sender, RoutedEventArgs e)
+        {
+            JpegBitmapDecoder decoder;
+            MemoryStream memoryStream;
 
-                memoryStream = new MemoryStream(m_tmData.LoadTile(4, 0, 0));
-            }
-            catch (ArgumentNullException ae)
-            {
-                throw new FaultException(ae.Message);
-            }
+            memoryStream = new MemoryStream(m_tmData.LoadTile(m_zoom, m_xValue, m_yValue));
 
             try
             {
@@ -54,6 +54,31 @@ namespace TrueMarbleGUI
             }
 
             imgTile.Source = decoder.Frames[0];
+        }
+
+        private void BldZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            m_zoom = (int)e.NewValue;
+        }
+
+        private void BtnSouth_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnWest_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnNorth_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnEast_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

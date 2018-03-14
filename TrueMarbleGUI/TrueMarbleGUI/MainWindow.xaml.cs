@@ -23,10 +23,13 @@ namespace TrueMarbleGUI
         {
             ChannelFactory<ITMDataController> channelFactory;
             JpegBitmapDecoder decoder;
-            Stream memoryStream;
+            MemoryStream memoryStream;
 
             NetTcpBinding tcpBinding = new NetTcpBinding();
             string url = "net.tcp://localhost:50001/TMData";
+
+            tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
+            tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
 
             try
             {

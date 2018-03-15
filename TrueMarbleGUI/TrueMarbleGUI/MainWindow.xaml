@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueMarbleGUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="378.432" Loaded="Window_Loaded">
+        Title="MainWindow" Height="600" Width="800" Loaded="Window_Loaded">
     <Grid Loaded="Grid_Loaded">
         <Button x:Name="btnLoad" Content="_Load Tile" HorizontalAlignment="Center" Margin="0,0,0,12" VerticalAlignment="Bottom" Width="75" RenderTransformOrigin="-1.24,0.378" Click="BtnLoad_Click"/>
         <Image x:Name="imgTile" HorizontalAlignment="Stretch" Margin="115,50,115,100" VerticalAlignment="Stretch"/>

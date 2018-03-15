@@ -9,6 +9,8 @@ namespace TrueMarbleGUI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// Written by Ross Curley
+    ///            19098081
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -17,6 +19,8 @@ namespace TrueMarbleGUI
         private int m_xValue;
         private int m_yValue;
 
+        // MainWindow Constructor
+        // sets default values of member fields
         public MainWindow()
         {
             InitializeComponent();
@@ -25,6 +29,9 @@ namespace TrueMarbleGUI
             m_yValue = 0;
         }
 
+        // Window_Loaded 
+        // first event fired 
+        // binds server and initialises m_tmData
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             ChannelFactory<ITMDataController> channelFactory;
@@ -32,25 +39,32 @@ namespace TrueMarbleGUI
             NetTcpBinding tcpBinding = new NetTcpBinding();
             string url = "net.tcp://localhost:50001/TMData";
 
+            // incease default message size quota
             tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
             tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
             
             // bind channel to url
-            channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);    
+            channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);   // bind url to channel factory
 
-            m_tmData = channelFactory.CreateChannel();
+            m_tmData = channelFactory.CreateChannel();  // create true marbledata on remote server
         }
 
+        // BtnLoad_Click
+        // event handler for when btnLoad is clicked
         private void BtnLoad_Click(object sender, RoutedEventArgs e)
         {
-            LoadTile();     //  load stile 
+            LoadTile();     //  loads tile 
         }
 
+        // SldZoom_ValueChanged
+        // event handler for when sldZoom is changed
+        // updates m_zoom and changes m_xValue and m_yValye 
+        // to avoid boundary errors
         private void SldZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             m_zoom = (int)sldZoom.Value;    
 
-            if (m_xValue > m_tmData.GetNumTilesAcross(m_zoom)-1)
+            if (m_xValue > m_tmData.GetNumTilesAcross(m_zoom)-1)   
             {
                 m_xValue = m_tmData.GetNumTilesAcross(m_zoom) -1 ;
             }
@@ -60,12 +74,12 @@ namespace TrueMarbleGUI
                 m_yValue = m_tmData.GetNumTilesDown(m_zoom) -1 ;
             }
 
-            lblX.Content = m_xValue;
-            lblY.Content = m_yValue;
-
-            //LoadTile();     // reload the tile
+            LoadTile();     // reload the tile
         }
 
+        // BtnSouth_Click
+        // event handler for when btnSouth is clicked
+        // increments the y value rolls back to end if it exceeds lower limit 
         private void BtnSouth_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -76,18 +90,20 @@ namespace TrueMarbleGUI
                 }
                 else
                 {
-                    m_yValue -= 1;      // else increment -1
+                    m_yValue --;      // else increment -1
                 }
             }
-            catch (CommunicationException ce)
+            catch (CommunicationException ce)   // catch if server dies
             {
                 throw new FaultException(ce.Message);
             }
-            lblY.Content = m_yValue;
 
-            //LoadTile();     // reload the tile
+            LoadTile();     // reload the tile
         }
 
+        // BtnWest_Click
+        // event handler for when btnWest is clicked
+        // increments x value rolls back to end if it exceeds lower limit 
         private void BtnWest_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -101,16 +117,17 @@ namespace TrueMarbleGUI
                     m_xValue -= 1;      // else increment - 1;
                 }
             }
-            catch (CommunicationException ce)
+            catch (CommunicationException ce)      // catch if server dies
             {
                 throw new FaultException(ce.Message);
             }
 
-            lblX.Content = m_xValue;
-
-            //LoadTile();     // reload the tile
+            LoadTile();     // reload the tile
         }
 
+        // BtnNorth_Click
+        // event handler for when btnNorth is clicked
+        // increments y value rolls back to start if upper limit is exceeded
         private void BtnNorth_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -124,15 +141,17 @@ namespace TrueMarbleGUI
                     m_yValue += 1;      // else increment 2
                 }
             }   
-            catch (CommunicationException ce)
+            catch (CommunicationException ce)      // catch if server dies
             {
                 throw new FaultException(ce.Message);
             }
-            lblY.Content = m_yValue;
 
-            //LoadTile();     // reload the tile
+            LoadTile();     // reload the tile
         }
 
+        // BtnEast_Click
+        // event handler for when btnEast is clicked
+        // increments x value rolls back to start if upper limit is exceeded
         private void BtnEast_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -146,14 +165,12 @@ namespace TrueMarbleGUI
                     m_xValue += 1;         // else increment by 2
                 }
             }
-            catch (CommunicationException ce)
+            catch (CommunicationException ce)       // catch if server dies
             {
                 throw new FaultException(ce.Message);
             }
 
-            lblX.Content = m_xValue;
-
-            // LoadTile();     // reload the tile
+            LoadTile();     // reload the tile
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -161,32 +178,36 @@ namespace TrueMarbleGUI
             // don't know what this is for but will not run without it ??
         }
 
+        // LoadTile
+        // Loads the tile from m_tmData 
+        // is called but event handlers when conditions change
         private void LoadTile()
         {
-            if (m_tmData != null)
+            if (m_tmData != null)       // only load if m_tmData is not null
             {
+                // used for getting JPG
                 JpegBitmapDecoder decoder;
                 MemoryStream memoryStream;
 
                 try
                 {
-                    memoryStream = new MemoryStream(m_tmData.LoadTile(m_zoom, m_xValue, m_yValue));
+                    memoryStream = new MemoryStream(m_tmData.LoadTile(m_zoom, m_xValue, m_yValue)); // construct memoryStream with byte array for server call
                 }
-                catch (CommunicationException ce)
+                catch (CommunicationException ce)   // catch exception if server died for some reason
                 {
                     throw new FaultException(ce.Message);
                 }
 
                 try
                 {
-                    decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
+                    decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None); // decode jpg
                 }
-                catch (FileFormatException fe)
+                catch (FileFormatException fe)  // catch decoder if it fails
                 {
                     throw new FaultException(fe.Message);
                 }
 
-                imgTile.Source = decoder.Frames[0];
+                imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
             }
         }
     }

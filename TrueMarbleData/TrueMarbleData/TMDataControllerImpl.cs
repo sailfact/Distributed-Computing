@@ -7,20 +7,25 @@ using System.Threading.Tasks;
 
 namespace TrueMarbleData
 {
+    // server object that inplements the interface for the dll functions
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
                         UseSynchronizationContext = false)]
     internal class TMDataControllerImpl : ITMDataController
     {
+        // Constructor
         TMDataControllerImpl()
         {
             Console.WriteLine("New Client has Connected");
         }
 
+        //Deconstructor
         ~TMDataControllerImpl()
         {
             Console.WriteLine("Client Disconnected");
         }
 
+        // GetNumTilesAcross
+        // returns number of tiles across depending on the level of zoom
         public int GetNumTilesAcross(int zoom)
         {
             int across, down;
@@ -33,6 +38,8 @@ namespace TrueMarbleData
             return across;
         }
 
+        // GetNumTilesDown
+        // returns number of tiles down depending on the level of zoom
         public int GetNumTilesDown(int zoom)
         {
             int across, down;
@@ -44,6 +51,9 @@ namespace TrueMarbleData
             return down;
         }
 
+        // GetTileHeight
+        // returns tile height
+        // always 256 
         public int GetTileHeight()
         {
             int height, width;
@@ -55,6 +65,9 @@ namespace TrueMarbleData
             return height;
         }
 
+        // GetTileWidth
+        // returns tile width 
+        // always 256
         public int GetTileWidth()
         {
             int height, width;
@@ -66,6 +79,10 @@ namespace TrueMarbleData
             return width;
         }
 
+
+        // LoadTile
+        // takes zoom, x, and y
+        // returns byte array containing the jpg
         public byte[] LoadTile(int zoom, int x, int y)
         {
             int height;
@@ -73,12 +90,13 @@ namespace TrueMarbleData
             byte[] array = null;
             int size;
 
-            if (TMDLLWrapper.GetTileSize(out width, out height) != 1)
+            if (TMDLLWrapper.GetTileSize(out width, out height) != 1)      // get height and width
             {
                 throw new FaultException("Error in function 'TMDLLWrapper.GetTileSize'");
             }
-            size = width * height * 3;
-            array = new byte[size];
+
+            size = width * height * 3;  // determine size
+            array = new byte[size];     // allocate buffer
 
             if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
             {

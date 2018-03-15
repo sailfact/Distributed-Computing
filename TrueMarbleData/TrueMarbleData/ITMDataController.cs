@@ -1,6 +1,4 @@
-﻿// Author : Ross Curley
-// 
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -9,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace TrueMarbleData
 {
+    // Remote interface for DLL functions
     [ServiceContract]
     public interface ITMDataController
     {

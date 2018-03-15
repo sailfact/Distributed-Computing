@@ -13,6 +13,7 @@ namespace TrueMarbleData
             NetTcpBinding tcpBinding = new NetTcpBinding();
             string url = "net.tcp://localhost:50001/TMData";
 
+            // increases message quota to max       
             tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
             tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
 

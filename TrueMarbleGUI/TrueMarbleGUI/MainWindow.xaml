@@ -13,8 +13,6 @@
         <Button x:Name="btnNorth" Content="_North" HorizontalAlignment="Center" Margin="0,12,0,0" VerticalAlignment="Top" Width="67" RenderTransformOrigin="1.826,0.797" Click="BtnNorth_Click" Height="25"/>
         <Button x:Name="btnEast" Content="_East" HorizontalAlignment="Right" Margin="0,0,60,0" VerticalAlignment="Center" Width="47" Click="BtnEast_Click" Height="25"/>
         <Button x:Name="btnSouth" Content="_South" HorizontalAlignment="Center" Margin="0,0,0,60" VerticalAlignment="Bottom" Width="67" Click="BtnSouth_Click" Height="24"/>
-        <Slider x:Name="sldZoom" Margin="12,17,0,5" TickFrequency="1" TickPlacement="TopLeft" Orientation="Vertical" Height="325" Width="29" Maximum="6" Foreground="#FF020202" ValueChanged="SldZoom_ValueChanged" HorizontalAlignment="Left"/>
-        <Label x:Name="lblX" HorizontalAlignment="Left" Margin="91,297,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-        <Label x:Name="lblY" HorizontalAlignment="Left" Margin="167,297,0,0" VerticalAlignment="Top"/>
+        <Slider x:Name="sldZoom" Margin="12,17,0,5" TickFrequency="1" TickPlacement="Both" Orientation="Vertical" Height="325" Width="29" Maximum="6" Foreground="#FF020202" ValueChanged="SldZoom_ValueChanged" HorizontalAlignment="Left"/>
     </Grid>
 </Window>

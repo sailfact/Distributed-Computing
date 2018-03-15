@@ -20,7 +20,7 @@ namespace TrueMarbleGUI
         public MainWindow()
         {
             InitializeComponent();
-            m_zoom = 4;
+            m_zoom = 0;
             m_xValue = 0;
             m_yValue = 0;
         }
@@ -35,67 +35,130 @@ namespace TrueMarbleGUI
             tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
             tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
             
-            channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);
+            // bind channel to url
+            channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);    
 
             m_tmData = channelFactory.CreateChannel();
         }
 
         private void BtnLoad_Click(object sender, RoutedEventArgs e)
         {
-            LoadTile();
+            LoadTile();     //  load stile 
         }
 
         private void SldZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            m_zoom = (int)sldZoom.Value;
-            LoadTile();
+            m_zoom = (int)sldZoom.Value;    
+
+            if (m_xValue > m_tmData.GetNumTilesAcross(m_zoom)-1)
+            {
+                m_xValue = m_tmData.GetNumTilesAcross(m_zoom) -1 ;
+            }
+
+            if (m_yValue > m_tmData.GetNumTilesDown(m_zoom)-1)
+            {
+                m_yValue = m_tmData.GetNumTilesDown(m_zoom) -1 ;
+            }
+
+            lblX.Content = m_xValue;
+            lblY.Content = m_yValue;
+
+            //LoadTile();     // reload the tile
         }
 
         private void BtnSouth_Click(object sender, RoutedEventArgs e)
         {
-            if (m_yValue <= 0)
+            try
             {
-                m_yValue = 0;
+                if (m_yValue == 0)      // if  y is at lower limit 
+                {
+                    m_yValue = m_tmData.GetNumTilesDown(m_zoom) - 1;       // roll back to end
+                }
+                else
+                {
+                    m_yValue -= 1;      // else increment -1
+                }
             }
-            else
+            catch (CommunicationException ce)
             {
-                m_yValue--;
+                throw new FaultException(ce.Message);
             }
+            lblY.Content = m_yValue;
 
-            LoadTile();
+            //LoadTile();     // reload the tile
         }
 
         private void BtnWest_Click(object sender, RoutedEventArgs e)
         {
-            if (m_xValue <= 0)
+            try
             {
-                m_xValue = 0;
+                if (m_xValue == 0)      // if x is at lower limit 
+                {
+                    m_xValue = m_tmData.GetNumTilesAcross(m_zoom) - 1;       // roll back to start
+                }
+                else
+                {
+                    m_xValue -= 1;      // else increment - 1;
+                }
             }
-            else
+            catch (CommunicationException ce)
             {
-                m_xValue--;
+                throw new FaultException(ce.Message);
             }
 
-            LoadTile();
+            lblX.Content = m_xValue;
+
+            //LoadTile();     // reload the tile
         }
 
         private void BtnNorth_Click(object sender, RoutedEventArgs e)
         {
-            m_yValue++;
+            try
+            { 
+                if (m_yValue == m_tmData.GetNumTilesDown(m_zoom)-1)      // if y is at upper limit 
+                {
+                    m_yValue = 0;       // roll back to start
+                }
+                else
+                {
+                    m_yValue += 1;      // else increment 2
+                }
+            }   
+            catch (CommunicationException ce)
+            {
+                throw new FaultException(ce.Message);
+            }
+            lblY.Content = m_yValue;
 
-            LoadTile();
+            //LoadTile();     // reload the tile
         }
 
         private void BtnEast_Click(object sender, RoutedEventArgs e)
         {
-            m_xValue++;
+            try
+            {
+                if (m_xValue == m_tmData.GetNumTilesAcross(m_zoom)-1)      // if x is at upper limit
+                {
+                    m_xValue = 0;       // roll back to start
+                }
+                else
+                {
+                    m_xValue += 1;         // else increment by 2
+                }
+            }
+            catch (CommunicationException ce)
+            {
+                throw new FaultException(ce.Message);
+            }
 
-            LoadTile();
+            lblX.Content = m_xValue;
+
+            // LoadTile();     // reload the tile
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-
+            // don't know what this is for but will not run without it ??
         }
 
         private void LoadTile()
@@ -105,7 +168,14 @@ namespace TrueMarbleGUI
                 JpegBitmapDecoder decoder;
                 MemoryStream memoryStream;
 
-                memoryStream = new MemoryStream(m_tmData.LoadTile(m_zoom, m_xValue, m_yValue));
+                try
+                {
+                    memoryStream = new MemoryStream(m_tmData.LoadTile(m_zoom, m_xValue, m_yValue));
+                }
+                catch (CommunicationException ce)
+                {
+                    throw new FaultException(ce.Message);
+                }
 
                 try
                 {

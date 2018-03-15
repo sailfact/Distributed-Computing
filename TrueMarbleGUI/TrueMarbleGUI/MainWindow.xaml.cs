@@ -20,7 +20,9 @@ namespace TrueMarbleGUI
         public MainWindow()
         {
             InitializeComponent();
-
+            m_zoom = 4;
+            m_xValue = 0;
+            m_yValue = 0;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -40,6 +42,64 @@ namespace TrueMarbleGUI
 
         private void BtnLoad_Click(object sender, RoutedEventArgs e)
         {
+            LoadTile();
+        }
+
+        private void SldZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            m_zoom = (int)sldZoom.Value;
+            LoadTile();
+        }
+
+        private void BtnSouth_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_yValue <= 0)
+            {
+                m_yValue = 0;
+            }
+            else
+            {
+                m_yValue--;
+            }
+
+            LoadTile();
+        }
+
+        private void BtnWest_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_xValue <= 0)
+            {
+                m_xValue = 0;
+            }
+            else
+            {
+                m_xValue--;
+            }
+
+            LoadTile();
+        }
+
+        private void BtnNorth_Click(object sender, RoutedEventArgs e)
+        {
+            m_yValue++;
+
+            LoadTile();
+        }
+
+        private void BtnEast_Click(object sender, RoutedEventArgs e)
+        {
+            m_xValue++;
+
+            LoadTile();
+        }
+
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void LoadTile()
+        {
             if (m_tmData != null)
             {
                 JpegBitmapDecoder decoder;
@@ -58,37 +118,6 @@ namespace TrueMarbleGUI
 
                 imgTile.Source = decoder.Frames[0];
             }
-        }
-
-        private void BldZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            m_zoom = (int)sldZoom.Value;
-            MessageBox.Show(m_zoom.ToString());
-        }
-
-        private void BtnSouth_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
-        private void BtnWest_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
-        private void BtnNorth_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
-        private void BtnEast_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

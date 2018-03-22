@@ -3,7 +3,7 @@ using System.ServiceModel;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.IO;
-using TrueMarbleData;
+using TrueMarbleBiz;
 
 namespace TrueMarbleGUI
 {
@@ -14,7 +14,7 @@ namespace TrueMarbleGUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ITMDataController m_tmData;
+        private ITMBizController m_biz;
         private int m_zoom;
         private int m_xValue;
         private int m_yValue;
@@ -34,19 +34,21 @@ namespace TrueMarbleGUI
         // binds server and initialises m_tmData
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ChannelFactory<ITMDataController> channelFactory;
+            ChannelFactory<ITMBizController> channelFactory;
 
             NetTcpBinding tcpBinding = new NetTcpBinding();
-            string url = "net.tcp://localhost:50001/TMData";
+            string url = "net.tcp://localhost:50002/TMBiz";
 
             // incease default message size quota
             tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
             tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
             
             // bind channel to url
-            channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);   // bind url to channel factory
+            channelFactory = new ChannelFactory<ITMBizController>(tcpBinding, url);   // bind url to channel factory
 
-            m_tmData = channelFactory.CreateChannel();  // create true marbledata on remote server
+            m_biz = channelFactory.CreateChannel();  // create true marbledata on remote server
+
+            m_biz.VerifyTiles();
         }
 
         // BtnLoad_Click
@@ -64,14 +66,14 @@ namespace TrueMarbleGUI
         {
             m_zoom = (int)sldZoom.Value;    
 
-            if (m_xValue > m_tmData.GetNumTilesAcross(m_zoom)-1)   
+            if (m_xValue > m_biz.GetNumTilesAcross(m_zoom)-1)   
             {
-                m_xValue = m_tmData.GetNumTilesAcross(m_zoom) -1 ;
+                m_xValue = m_biz.GetNumTilesAcross(m_zoom) -1 ;
             }
 
-            if (m_yValue > m_tmData.GetNumTilesDown(m_zoom)-1)
+            if (m_yValue > m_biz.GetNumTilesDown(m_zoom)-1)
             {
-                m_yValue = m_tmData.GetNumTilesDown(m_zoom) -1 ;
+                m_yValue = m_biz.GetNumTilesDown(m_zoom) -1 ;
             }
 
             LoadTile();     // reload the tile
@@ -86,7 +88,7 @@ namespace TrueMarbleGUI
             {
                 if (m_yValue == 0)      // if  y is at lower limit 
                 {
-                    m_yValue = m_tmData.GetNumTilesDown(m_zoom) - 1;       // roll back to end
+                    m_yValue = m_biz.GetNumTilesDown(m_zoom) - 1;       // roll back to end
                 }
                 else
                 {
@@ -110,7 +112,7 @@ namespace TrueMarbleGUI
             {
                 if (m_xValue == 0)      // if x is at lower limit 
                 {
-                    m_xValue = m_tmData.GetNumTilesAcross(m_zoom) - 1;       // roll back to start
+                    m_xValue = m_biz.GetNumTilesAcross(m_zoom) - 1;       // roll back to start
                 }
                 else
                 {
@@ -132,7 +134,7 @@ namespace TrueMarbleGUI
         {
             try
             { 
-                if (m_yValue == m_tmData.GetNumTilesDown(m_zoom)-1)      // if y is at upper limit 
+                if (m_yValue == m_biz.GetNumTilesDown(m_zoom)-1)      // if y is at upper limit 
                 {
                     m_yValue = 0;       // roll back to start
                 }
@@ -156,7 +158,7 @@ namespace TrueMarbleGUI
         {
             try
             {
-                if (m_xValue == m_tmData.GetNumTilesAcross(m_zoom)-1)      // if x is at upper limit
+                if (m_xValue == m_biz.GetNumTilesAcross(m_zoom)-1)      // if x is at upper limit
                 {
                     m_xValue = 0;       // roll back to start
                 }
@@ -183,7 +185,7 @@ namespace TrueMarbleGUI
         // is called but event handlers when conditions change
         private void LoadTile()
         {
-            if (m_tmData != null)       // only load if m_tmData is not null
+            if (m_biz != null)       // only load if m_tmData is not null
             {
                 // used for getting JPG
                 JpegBitmapDecoder decoder;
@@ -191,7 +193,7 @@ namespace TrueMarbleGUI
 
                 try
                 {
-                    memoryStream = new MemoryStream(m_tmData.LoadTile(m_zoom, m_xValue, m_yValue)); // construct memoryStream with byte array for server call
+                    memoryStream = new MemoryStream(m_biz.LoadTile(m_zoom, m_xValue, m_yValue)); // construct memoryStream with byte array for server call
                 }
                 catch (CommunicationException ce)   // catch exception if server died for some reason
                 {

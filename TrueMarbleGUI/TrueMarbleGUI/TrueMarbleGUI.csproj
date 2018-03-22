@@ -82,8 +82,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="TrueMarbleData">
-      <HintPath>..\..\TrueMarbleData\TrueMarbleData\bin\Debug\TrueMarbleData.exe</HintPath>
+    <Reference Include="TrueMarbleBiz">
+      <HintPath>..\..\TrueMarbleBiz\TrueMarbleBiz\bin\Debug\TrueMarbleBiz.exe</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />

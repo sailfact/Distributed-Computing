@@ -21,7 +21,7 @@ namespace TrueMarbleBiz
             ChannelFactory<ITMDataController> channelFactory;
 
             NetTcpBinding tcpBinding = new NetTcpBinding();
-            string url = "net.tcp://localhost:50001/TMData";
+            string url = "net.tcp://localhost:50001/TMData";    // TMData url
 
             // incease default message size quota
             tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;

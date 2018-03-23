@@ -22,7 +22,7 @@ namespace TrueMarbleBiz
         // creates channel to Data server
         TMBizControllerImpl()
         {
-            DuplexChannelFactory<ITMDataController> channelFactory;
+            ChannelFactory<ITMDataController> channelFactory;
 
             NetTcpBinding tcpBinding = new NetTcpBinding();
             string url = "net.tcp://localhost:50001/TMData";    
@@ -32,7 +32,7 @@ namespace TrueMarbleBiz
             tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
 
             // bind channel to url
-            channelFactory = new DuplexChannelFactory<ITMDataController>(tcpBinding, url);   // bind url to channel factory
+            channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);   // bind url to channel factory
 
             m_tmData = channelFactory.CreateChannel();  // create true marbledata on remote server
         }
@@ -86,10 +86,9 @@ namespace TrueMarbleBiz
 
             callbackDel = this.VerifyTiles_OnComplete;  // point callback delegate at call back function
             // pass remote client callback reference
-            addDel.BeginInvoke(null,  OperationContext.Current.GetCallbackChannel<ITMBizControllerCallback>());             
+            addDel.BeginInvoke(callbackDel,  OperationContext.Current.GetCallbackChannel<ITMBizControllerCallback>());             
 
             Console.WriteLine("Waiting for Verification");
-            Console.ReadLine();         // wait for callback
         }
 
         public void VerifyTiles_OnComplete(IAsyncResult res)

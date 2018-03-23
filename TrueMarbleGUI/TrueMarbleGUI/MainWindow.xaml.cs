@@ -26,7 +26,7 @@ namespace TrueMarbleGUI
         public MainWindow()
         {
             InitializeComponent();
-            m_zoom = 0;
+            m_zoom = 4;
             m_xValue = 0;
             m_yValue = 0;
         }
@@ -46,7 +46,7 @@ namespace TrueMarbleGUI
             tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
             
             // bind channel to url
-            channelFactory = new DuplexChannelFactory<ITMBizController>(this, tcpBinding, url);   // bind url to channel factory
+            channelFactory = new DuplexChannelFactory<ITMBizController>(new InstanceContext(this), tcpBinding, url);   // bind url to channel factory
 
             m_biz = channelFactory.CreateChannel();  // create true marblebiz on remote server
 

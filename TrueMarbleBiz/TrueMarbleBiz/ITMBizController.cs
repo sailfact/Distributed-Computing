@@ -32,6 +32,7 @@ namespace TrueMarbleBiz
     [ServiceContract]
     public interface ITMBizControllerCallback
     {
+        [OperationContract(IsOneWay = true)]
         void OnVerificationComplete(bool result);
     }
 }

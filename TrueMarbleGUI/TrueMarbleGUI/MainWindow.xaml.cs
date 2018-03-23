@@ -12,7 +12,9 @@ namespace TrueMarbleGUI
     /// Written by Ross Curley
     ///            19098081
     /// </summary>
-    public partial class MainWindow : Window
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
+                      UseSynchronizationContext = false)]
+    public partial class MainWindow : Window, ITMBizControllerCallback
     {
         private ITMBizController m_biz;
         private int m_zoom;
@@ -34,7 +36,7 @@ namespace TrueMarbleGUI
         // binds server and initialises m_tmData
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ChannelFactory<ITMBizController> channelFactory;
+            DuplexChannelFactory<ITMBizController> channelFactory;
 
             NetTcpBinding tcpBinding = new NetTcpBinding();
             string url = "net.tcp://localhost:50002/TMBiz";
@@ -44,11 +46,11 @@ namespace TrueMarbleGUI
             tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
             
             // bind channel to url
-            channelFactory = new ChannelFactory<ITMBizController>(tcpBinding, url);   // bind url to channel factory
+            channelFactory = new DuplexChannelFactory<ITMBizController>(this, tcpBinding, url);   // bind url to channel factory
 
-            m_biz = channelFactory.CreateChannel();  // create true marbledata on remote server
+            m_biz = channelFactory.CreateChannel();  // create true marblebiz on remote server
 
-            m_biz.VerifyTiles();
+            m_biz.VerifyTilesAsync();
         }
 
         // BtnLoad_Click
@@ -210,6 +212,18 @@ namespace TrueMarbleGUI
                 }
 
                 imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
+            }
+        }
+        
+        public void OnVerificationComplete(bool result)
+        {
+            if (result)
+            {
+                MessageBox.Show("Images Verified");
+            }
+            else
+            {
+                MessageBox.Show("Images Corrupted");
             }
         }
     }

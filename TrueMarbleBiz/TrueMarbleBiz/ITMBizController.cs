@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TrueMarbleBiz
 {
-    [ServiceContract]
+    [ServiceContract(CallbackContract = typeof(ITMBizControllerCallback))]
     public interface ITMBizController
     {
         [OperationContract]
@@ -22,5 +22,16 @@ namespace TrueMarbleBiz
         [OperationContract]
         bool VerifyTiles();
 
+        [OperationContract]
+        void VerifyTilesAsync();
+
+        [OperationContract]
+        void VerifyTiles_OnComplete(IAsyncResult res);
+    }
+
+    [ServiceContract]
+    public interface ITMBizControllerCallback
+    {
+        void OnVerificationComplete(bool result);
     }
 }

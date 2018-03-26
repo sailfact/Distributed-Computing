@@ -66,19 +66,22 @@ namespace TrueMarbleGUI
         // to avoid boundary errors
         private void SldZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            m_zoom = (int)sldZoom.Value;    
-
-            if (m_xValue > m_biz.GetNumTilesAcross(m_zoom)-1)   
+            if (m_biz != null)
             {
-                m_xValue = m_biz.GetNumTilesAcross(m_zoom) -1 ;
-            }
+                m_zoom = (int)sldZoom.Value;
 
-            if (m_yValue > m_biz.GetNumTilesDown(m_zoom)-1)
-            {
-                m_yValue = m_biz.GetNumTilesDown(m_zoom) -1 ;
-            }
+                if (m_xValue > m_biz.GetNumTilesAcross(m_zoom) - 1)
+                {
+                    m_xValue = m_biz.GetNumTilesAcross(m_zoom) - 1;
+                }
 
-            LoadTile();     // reload the tile
+                if (m_yValue > m_biz.GetNumTilesDown(m_zoom) - 1)
+                {
+                    m_yValue = m_biz.GetNumTilesDown(m_zoom) - 1;
+                }
+
+                LoadTile();     // reload the tile
+            }
         }
 
         // BtnSouth_Click

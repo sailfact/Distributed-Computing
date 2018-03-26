@@ -68,7 +68,7 @@ namespace TrueMarbleBiz
                             memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
                             decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
                         }
-                        catch (FileFormatException f)
+                        catch 
                         {
                             verified = false;
                         }

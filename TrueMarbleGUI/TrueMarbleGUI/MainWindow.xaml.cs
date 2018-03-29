@@ -44,9 +44,16 @@ namespace TrueMarbleGUI
             // incease default message size quota
             tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
             tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
-            
+
             // bind channel to url
-            channelFactory = new DuplexChannelFactory<ITMBizController>(new InstanceContext(this), tcpBinding, url);   // bind url to channel factory
+            try
+            {
+                channelFactory = new DuplexChannelFactory<ITMBizController>(new InstanceContext(this), tcpBinding, url);   // bind url to channel factory
+            }
+            catch (ArgumentNullException ne)
+            {
+                throw new FaultException(ne.Message);
+            }
 
             m_biz = channelFactory.CreateChannel();  // create true marblebiz on remote server
 
@@ -69,15 +76,21 @@ namespace TrueMarbleGUI
             if (m_biz != null)
             {
                 m_zoom = (int)sldZoom.Value;
-
-                if (m_xValue > m_biz.GetNumTilesAcross(m_zoom) - 1)
+                try
                 {
-                    m_xValue = m_biz.GetNumTilesAcross(m_zoom) - 1;
+                    if (m_xValue > m_biz.GetNumTilesAcross(m_zoom) - 1)
+                    {
+                        m_xValue = m_biz.GetNumTilesAcross(m_zoom) - 1;
+                    }
+
+                    if (m_yValue > m_biz.GetNumTilesDown(m_zoom) - 1)
+                    {
+                        m_yValue = m_biz.GetNumTilesDown(m_zoom) - 1;
+                    }
                 }
-
-                if (m_yValue > m_biz.GetNumTilesDown(m_zoom) - 1)
+                catch (CommunicationException ce)       // if server died
                 {
-                    m_yValue = m_biz.GetNumTilesDown(m_zoom) - 1;
+                    throw new FaultException(ce.Message);
                 }
 
                 LoadTile();     // reload the tile
@@ -97,7 +110,7 @@ namespace TrueMarbleGUI
                 }
                 else
                 {
-                    m_yValue --;      // else increment -1
+                    m_yValue--;      // else increment -1
                 }
             }
             catch (CommunicationException ce)   // catch if server dies
@@ -199,22 +212,21 @@ namespace TrueMarbleGUI
                 try
                 {
                     memoryStream = new MemoryStream(m_biz.LoadTile(m_zoom, m_xValue, m_yValue)); // construct memoryStream with byte array for server call
+                    decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None); // decode jpg
+                    imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
+                }
+                catch (FileFormatException fe)  // catch decoder if it fails
+                {
+                    MessageBox.Show(fe.Message);
+                }
+                catch (FaultException fe)   // if LoadTiles fails show the error message and continue
+                {
+                    MessageBox.Show(fe.Message);
                 }
                 catch (CommunicationException ce)   // catch exception if server died for some reason
                 {
                     throw new FaultException(ce.Message);
                 }
-
-                try
-                {
-                    decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None); // decode jpg
-                }
-                catch (FileFormatException fe)  // catch decoder if it fails
-                {
-                    throw new FaultException(fe.Message);
-                }
-
-                imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
             }
         }
         

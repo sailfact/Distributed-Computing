@@ -98,12 +98,23 @@ namespace TrueMarbleData
             size = width * height * 3;  // determine size
             array = new byte[size];     // allocate buffer
 
+            // check if coordinates are valid
+            if (!CheckCoordinates(zoom, x, y))
+            {
+                throw new FaultException("Error in function LoadTiles 'Coordinates Are Not Valid");
+            }
+
             if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
             {
                 throw new FaultException("Error in function 'TMDLLWrapper.GetTileImageAsRawJPG'");
             }
 
             return array;
+        }
+
+        private bool CheckCoordinates(int zoom, int x, int y)
+        {
+            return (x < GetNumTilesAcross(zoom))&&(y < GetNumTilesDown(zoom));
         }
     }
 }

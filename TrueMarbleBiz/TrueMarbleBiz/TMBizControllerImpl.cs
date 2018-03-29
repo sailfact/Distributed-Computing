@@ -70,6 +70,7 @@ namespace TrueMarbleBiz
                         }
                         catch 
                         {
+                            // if it fails it probably is corrupt
                             verified = false;
                         }
                     }

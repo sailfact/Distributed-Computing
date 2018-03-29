@@ -15,9 +15,16 @@ namespace TrueMarbleBiz
             NetTcpBinding tcpBinding = new NetTcpBinding();
             string url = "net.tcp://localhost:50002/TMBiz";
 
-            // increases message quota to max       
-            tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
-            tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
+            // increases message quota to max
+            try
+            {
+                tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
+                tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
+            }
+            catch (InvalidOperationException oe)
+            {
+                throw new FaultException(oe.Message);
+            }
 
             host = new ServiceHost(typeof(TMBizControllerImpl));   // host the implementing class
             host.AddServiceEndpoint(typeof(ITMBizController), tcpBinding, url);    // access via the interface class

@@ -32,13 +32,19 @@ namespace TrueMarbleBiz
         void AddHistEntry(int x, int y, int zoom);
 
         [OperationContract]
-        HistEntry GetCurrHistEntry();
+        void GetCurrHistEntry(out int x, out int y, out int zoom);
 
         [OperationContract]
-        void HistBack();
+        void HistBack(out int x, out int y, out int zoom);
 
         [OperationContract]
-        void HistForward();
+        void HistForward(out int x, out int y, out int zoom);
+
+        [OperationContract]
+        BrowseHistory GetFullHistory();
+
+        [OperationContract]
+        void SetFullHistory(BrowseHistory hist);
     }
 
     [ServiceContract]

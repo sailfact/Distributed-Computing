@@ -114,7 +114,7 @@ namespace TrueMarbleData
 
         private bool CheckCoordinates(int zoom, int x, int y)
         {
-            return (x < GetNumTilesAcross(zoom))&&(y < GetNumTilesDown(zoom));
+            return (x < GetNumTilesAcross(zoom))&&(y < GetNumTilesDown(zoom) );
         }
     }
 }

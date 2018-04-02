@@ -40,18 +40,41 @@ namespace TrueMarbleBiz
             CurEntryIdx = -1;
         }
 
-        public void AddHistEntry(int x ,int y, int zoom)
+        public void AddHistEntry(int x, int y, int zoom)
         {
-            History.Add(new HistEntry(x, y, zoom));
+            if (History.Count() < CurEntryIdx)
+            {
+                // reallocate list with up until current entry
+                History.RemoveRange(CurEntryIdx+1, History.Count);
+            }
             CurEntryIdx++;
+            History.Insert(CurEntryIdx ,new HistEntry(x, y, zoom));
+            
         }
 
         public HistEntry GetCurrHist()
         {
             return History[CurEntryIdx];
         }
+
+        public HistEntry GetHistBack()
+        {
+            if (CurEntryIdx > 0)
+            {
+                CurEntryIdx--;
+            }
+
+            return History[CurEntryIdx];
+        }
+
+        public HistEntry GetHistForward()
+        {
+            if (CurEntryIdx + 1 < History.Count)   // Make sure there is a entry ahead
+            {
+                CurEntryIdx++;  // increment current idx
+            }
+
+            return History[CurEntryIdx];
+        }
     }
-
-
-    
 }

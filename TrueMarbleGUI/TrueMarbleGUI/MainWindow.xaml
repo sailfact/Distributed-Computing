@@ -14,5 +14,13 @@
         <Button x:Name="btnEast" Content="_East" HorizontalAlignment="Right" Margin="0,0,60,0" VerticalAlignment="Center" Width="47" Click="BtnEast_Click" Height="25"/>
         <Button x:Name="btnSouth" Content="_South" HorizontalAlignment="Center" Margin="0,0,0,60" VerticalAlignment="Bottom" Width="67" Click="BtnSouth_Click" Height="24"/>
         <Slider x:Name="sldZoom" Margin="12,17,0,5" TickFrequency="1" TickPlacement="Both" Orientation="Vertical" Height="325" Width="29" Maximum="6" Foreground="#FF020202" ValueChanged="SldZoom_ValueChanged" HorizontalAlignment="Left" Value="4"/>
+        <Button x:Name="btnForward" Content="_Forward" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="75" Click="btnForward_Click"/>
+        <Button x:Name="btnBack" Content="_Back" HorizontalAlignment="Right" Margin="0,0,100,15" VerticalAlignment="Bottom" Width="75" Click="btnBack_Click"/>
+        <Menu HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" VerticalAlignment="Top" Width="100">
+            <MenuItem x:Name="mitFile" Header="File" Height="17" Width="100">
+                <MenuItem Header="Save" HorizontalAlignment="Left" Height="17" Width="139" Click="MenuItem_Click_Save"/>
+                <MenuItem Header="Load" HorizontalAlignment="Left" Height="17" Width="139" Click="MenuItem_Click_Load"/>
+            </MenuItem>
+        </Menu>
     </Grid>
 </Window>

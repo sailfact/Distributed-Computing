@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.IO;
 using TrueMarbleBiz;
+using System.Runtime.Serialization;
 
 namespace TrueMarbleGUI
 {
@@ -63,7 +64,7 @@ namespace TrueMarbleGUI
         // event handler for when btnLoad is clicked
         private void BtnLoad_Click(object sender, RoutedEventArgs e)
         {
-            LoadTile();     //  loads tile 
+            LoadTile(true);     //  loads tile 
         }
 
         // SldZoom_ValueChanged
@@ -92,7 +93,7 @@ namespace TrueMarbleGUI
                     MessageBox.Show("Error" + ce.Message);
                 }
 
-                LoadTile();     // reload the tile
+                LoadTile(true);     // reload the tile
             }
         }
 
@@ -117,7 +118,7 @@ namespace TrueMarbleGUI
                 MessageBox.Show("Error" + ce.Message);
             }
 
-            LoadTile();     // reload the tile
+            LoadTile(true);     // reload the tile
         }
 
         // BtnWest_Click
@@ -141,7 +142,7 @@ namespace TrueMarbleGUI
                 MessageBox.Show("Error" + ce.Message);
             }
 
-            LoadTile();     // reload the tile
+            LoadTile(true);     // reload the tile
         }
 
         // BtnNorth_Click
@@ -165,7 +166,7 @@ namespace TrueMarbleGUI
                 MessageBox.Show("Error"+ce.Message);
             }
 
-            LoadTile();     // reload the tile
+            LoadTile(true);     // reload the tile
         }
 
         // BtnEast_Click
@@ -189,7 +190,7 @@ namespace TrueMarbleGUI
                 MessageBox.Show("Error" + ce.Message);
             }
 
-            LoadTile();     // reload the tile
+            LoadTile(true);     // reload the tile
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -200,7 +201,7 @@ namespace TrueMarbleGUI
         // LoadTile
         // Loads the tile from m_tmData 
         // is called but event handlers when conditions change
-        private void LoadTile()
+        private void LoadTile(bool addToHist)
         {
             if (m_biz != null)       // only load if m_tmData is not null
             {
@@ -213,6 +214,8 @@ namespace TrueMarbleGUI
                     memoryStream = new MemoryStream(m_biz.LoadTile(m_zoom, m_xValue, m_yValue)); // construct memoryStream with byte array for server call
                     decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None); // decode jpg
                     imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
+                    if (addToHist)
+                        m_biz.AddHistEntry(m_xValue, m_yValue, m_zoom);     // add entry to history
                 }
                 catch (FileFormatException fe)  // catch decoder if it fails
                 {
@@ -229,6 +232,20 @@ namespace TrueMarbleGUI
             }
         }
         
+        private void btnBack_Click(object sender, RoutedEventArgs e)
+        {
+            m_biz.HistBack(out m_xValue, out m_yValue, out m_zoom);
+
+            LoadTile(false);
+        }
+
+        private void btnForward_Click(object sender, RoutedEventArgs e)
+        {
+            m_biz.HistForward(out m_xValue, out m_yValue, out m_zoom);
+
+            LoadTile(false);
+        }
+
         public void OnVerificationComplete(bool result)
         {
             if (result)
@@ -239,6 +256,39 @@ namespace TrueMarbleGUI
             {
                 MessageBox.Show("Images Corrupted");
             }
+        }
+
+        private void MenuItem_Click_Save(object sender, RoutedEventArgs e)
+        {
+            BrowseHistory browseHistory = m_biz.GetFullHistory();
+            FileStream fileStream;
+            DataContractSerializer serializer;
+
+            try
+            {
+                fileStream = new FileStream("C:/History.xml", FileMode.Create, FileAccess.Write);
+                serializer = new DataContractSerializer(typeof(BrowseHistory));
+                serializer.WriteObject(fileStream, browseHistory);
+
+                fileStream.Close();
+            }
+            catch (UnauthorizedAccessException ua)
+            {
+                MessageBox.Show(ua.Message);
+            }
+            catch (IOException io)
+            {
+                MessageBox.Show(io.Message);
+            }
+        }
+
+        private void MenuItem_Click_Load (object sender, RoutedEventArgs e)
+        {
+            FileStream fileStream = new FileStream("C:/History.xml", FileMode.Open, FileAccess.Read);
+            DataContractSerializer serializer = new DataContractSerializer(typeof(BrowseHistory));
+
+            BrowseHistory browseHistory = (BrowseHistory)serializer.ReadObject(fileStream);
+            fileStream.Close();
         }
     }
 }

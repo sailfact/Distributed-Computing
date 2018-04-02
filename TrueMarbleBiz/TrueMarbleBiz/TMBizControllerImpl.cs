@@ -108,8 +108,15 @@ namespace TrueMarbleBiz
                 iResult = addDel.EndInvoke(asyncObj);   // retrieve result 
             }
 
-            asyncObj.AsyncWaitHandle.Close();
-            ob.OnVerificationComplete(iResult);     // send result to client
+            try
+            {
+                asyncObj.AsyncWaitHandle.Close();
+                ob.OnVerificationComplete(iResult);     // send result to client
+            }
+            catch (CommunicationObjectAbortedException ae)
+            {
+                Console.WriteLine(ae.Message);
+            }
         }
 
         public void AddHistEntry(int x, int y, int zoom)
@@ -117,19 +124,38 @@ namespace TrueMarbleBiz
             m_hist.AddHistEntry(x, y, zoom);
         }
 
-        public HistEntry GetCurrHistEntry()
+        public void GetCurrHistEntry(out int x,  out int y, out int zoom)
         {
-            return m_hist.GetCurrHist();
+            HistEntry entry = m_hist.GetCurrHist();
+            x = entry.X;
+            y = entry.Y;
+            zoom = entry.Zoom;
         }
 
-        public void HistBack()
+        public void HistBack(out int x, out int y, out int zoom)
         {
-
+            HistEntry entry = m_hist.GetHistBack();
+            x = entry.X;
+            y = entry.Y;
+            zoom = entry.Zoom;
         }
 
-        public void HistForward()
+        public void HistForward(out int x, out int y, out int zoom)
         {
+            HistEntry entry = m_hist.GetHistForward();
+            x = entry.X;
+            y = entry.Y;
+            zoom = entry.Zoom;
+        }
 
+        public BrowseHistory GetFullHistory()
+        {
+            return m_hist;
+        }
+
+        public void SetFullHistory(BrowseHistory hist)
+        {
+            m_hist = hist;
         }
     }
 }

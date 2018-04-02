@@ -266,7 +266,7 @@ namespace TrueMarbleGUI
 
             try
             {
-                fileStream = new FileStream("C:/History.xml", FileMode.Create, FileAccess.Write);
+                fileStream = new FileStream("C:/Users/Sailf/History.xml", FileMode.Create, FileAccess.Write);
                 serializer = new DataContractSerializer(typeof(BrowseHistory));
                 serializer.WriteObject(fileStream, browseHistory);
 
@@ -284,11 +284,23 @@ namespace TrueMarbleGUI
 
         private void MenuItem_Click_Load (object sender, RoutedEventArgs e)
         {
-            FileStream fileStream = new FileStream("C:/History.xml", FileMode.Open, FileAccess.Read);
-            DataContractSerializer serializer = new DataContractSerializer(typeof(BrowseHistory));
+            try
+            {
+                FileStream fileStream = new FileStream("C:/Users/Sailf/History.xml", FileMode.Open, FileAccess.Read);
+                DataContractSerializer serializer = new DataContractSerializer(typeof(BrowseHistory));
 
-            BrowseHistory browseHistory = (BrowseHistory)serializer.ReadObject(fileStream);
-            fileStream.Close();
+                BrowseHistory browseHistory = (BrowseHistory)serializer.ReadObject(fileStream);
+                fileStream.Close();
+                m_biz.SetFullHistory(browseHistory);
+            }
+            catch (UnauthorizedAccessException ua)
+            {
+                MessageBox.Show(ua.Message);
+            }
+            catch (IOException io)
+            {
+                MessageBox.Show(io.Message);
+            }
         }
     }
 }

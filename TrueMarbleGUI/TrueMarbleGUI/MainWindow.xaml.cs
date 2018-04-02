@@ -49,13 +49,12 @@ namespace TrueMarbleGUI
             try
             {
                 channelFactory = new DuplexChannelFactory<ITMBizController>(new InstanceContext(this), tcpBinding, url);   // bind url to channel factory
+                m_biz = channelFactory.CreateChannel();  // create true marblebiz on remote server
             }
             catch (ArgumentNullException ne)
             {
-                throw new FaultException(ne.Message);
+                MessageBox.Show("Error Creating Channel Factory : "+ ne.Message);
             }
-
-            m_biz = channelFactory.CreateChannel();  // create true marblebiz on remote server
 
             m_biz.VerifyTilesAsync();
         }
@@ -90,7 +89,7 @@ namespace TrueMarbleGUI
                 }
                 catch (CommunicationException ce)       // if server died
                 {
-                    throw new FaultException(ce.Message);
+                    MessageBox.Show("Error" + ce.Message);
                 }
 
                 LoadTile();     // reload the tile
@@ -115,7 +114,7 @@ namespace TrueMarbleGUI
             }
             catch (CommunicationException ce)   // catch if server dies
             {
-                throw new FaultException(ce.Message);
+                MessageBox.Show("Error" + ce.Message);
             }
 
             LoadTile();     // reload the tile
@@ -139,7 +138,7 @@ namespace TrueMarbleGUI
             }
             catch (CommunicationException ce)      // catch if server dies
             {
-                throw new FaultException(ce.Message);
+                MessageBox.Show("Error" + ce.Message);
             }
 
             LoadTile();     // reload the tile
@@ -163,7 +162,7 @@ namespace TrueMarbleGUI
             }   
             catch (CommunicationException ce)      // catch if server dies
             {
-                throw new FaultException(ce.Message);
+                MessageBox.Show("Error"+ce.Message);
             }
 
             LoadTile();     // reload the tile
@@ -187,7 +186,7 @@ namespace TrueMarbleGUI
             }
             catch (CommunicationException ce)       // catch if server dies
             {
-                throw new FaultException(ce.Message);
+                MessageBox.Show("Error" + ce.Message);
             }
 
             LoadTile();     // reload the tile
@@ -225,7 +224,7 @@ namespace TrueMarbleGUI
                 }
                 catch (CommunicationException ce)   // catch exception if server died for some reason
                 {
-                    throw new FaultException(ce.Message);
+                    MessageBox.Show("Error" + ce.Message);
                 }
             }
         }

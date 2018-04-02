@@ -27,6 +27,18 @@ namespace TrueMarbleBiz
 
         [OperationContract]
         void VerifyTiles_OnComplete(IAsyncResult res);
+
+        [OperationContract]
+        void AddHistEntry(int x, int y, int zoom);
+
+        [OperationContract]
+        HistEntry GetCurrHistEntry();
+
+        [OperationContract]
+        void HistBack();
+
+        [OperationContract]
+        void HistForward();
     }
 
     [ServiceContract]

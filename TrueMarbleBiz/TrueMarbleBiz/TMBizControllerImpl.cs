@@ -16,6 +16,7 @@ namespace TrueMarbleBiz
     class TMBizControllerImpl : ITMBizController
     {
         private ITMDataController m_tmData;
+        private BrowseHistory m_hist;
         private delegate bool VerifyOperation();
         
         // Constructor for TMBizController
@@ -33,8 +34,9 @@ namespace TrueMarbleBiz
 
             // bind channel to url
             channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);   // bind url to channel factory
-
+            
             m_tmData = channelFactory.CreateChannel();  // create true marbledata on remote server
+            m_hist = new BrowseHistory();
         }
 
         public int GetNumTilesAcross(int zoom)
@@ -108,6 +110,26 @@ namespace TrueMarbleBiz
 
             asyncObj.AsyncWaitHandle.Close();
             ob.OnVerificationComplete(iResult);     // send result to client
+        }
+
+        public void AddHistEntry(int x, int y, int zoom)
+        {
+            m_hist.AddHistEntry(x, y, zoom);
+        }
+
+        public HistEntry GetCurrHistEntry()
+        {
+            return m_hist.GetCurrHist();
+        }
+
+        public void HistBack()
+        {
+
+        }
+
+        public void HistForward()
+        {
+
         }
     }
 }

@@ -193,11 +193,6 @@ namespace TrueMarbleGUI
             LoadTile(true);     // reload the tile
         }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-            // don't know what this is for but will not run without it ??
-        }
-
         // LoadTile
         // Loads the tile from m_tmData 
         // is called but event handlers when conditions change
@@ -301,6 +296,12 @@ namespace TrueMarbleGUI
             {
                 MessageBox.Show(io.Message);
             }
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            DisplayHistory histWind = new DisplayHistory(m_biz.GetFullHistory());
+            histWind.ShowDialog();
         }
     }
 }

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TrueMarbleGUI"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800" Loaded="Window_Loaded">
-    <Grid Loaded="Grid_Loaded">
+    <Grid>
         <Button x:Name="btnLoad" Content="_Load Tile" HorizontalAlignment="Center" Margin="0,0,0,12" VerticalAlignment="Bottom" Width="75" RenderTransformOrigin="-1.24,0.378" Click="BtnLoad_Click"/>
         <Image x:Name="imgTile" HorizontalAlignment="Stretch" Margin="115,50,115,100" VerticalAlignment="Stretch"/>
         <Button x:Name="btnWest" Content="_West" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Center" Width="45" Click="BtnWest_Click" Height="25"/>
@@ -17,10 +17,11 @@
         <Button x:Name="btnForward" Content="_Forward" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="75" Click="btnForward_Click"/>
         <Button x:Name="btnBack" Content="_Back" HorizontalAlignment="Right" Margin="0,0,100,15" VerticalAlignment="Bottom" Width="75" Click="btnBack_Click"/>
         <Menu HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" VerticalAlignment="Top" Width="100">
-            <MenuItem x:Name="mitFile" Header="File" Height="17" Width="100">
+            <MenuItem x:Name="mitFile" Header="File" Height="17" Width="37">
                 <MenuItem Header="Save" HorizontalAlignment="Left" Height="17" Width="139" Click="MenuItem_Click_Save"/>
                 <MenuItem Header="Load" HorizontalAlignment="Left" Height="17" Width="139" Click="MenuItem_Click_Load"/>
             </MenuItem>
+            <MenuItem Header="History" Height="17" Width="53" Click="MenuItem_Click"/>
         </Menu>
     </Grid>
 </Window>

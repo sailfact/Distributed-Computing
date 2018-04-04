@@ -227,14 +227,14 @@ namespace TrueMarbleGUI
             }
         }
         
-        private void btnBack_Click(object sender, RoutedEventArgs e)
+        private void BtnBack_Click(object sender, RoutedEventArgs e)
         {
             m_biz.HistBack(out m_xValue, out m_yValue, out m_zoom);
 
             LoadTile(false);
         }
 
-        private void btnForward_Click(object sender, RoutedEventArgs e)
+        private void BtnForward_Click(object sender, RoutedEventArgs e)
         {
             m_biz.HistForward(out m_xValue, out m_yValue, out m_zoom);
 

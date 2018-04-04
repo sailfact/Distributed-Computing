@@ -16,8 +16,8 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="BtnClose" Content="_Close" HorizontalAlignment="right" Margin="20,20,20,20" VerticalAlignment="Bottom" Width="75" Click="BtnClose_Click"/>
-        <Button x:Name="BtnOk" Content="_Ok" HorizontalAlignment="Left" Margin="20,20,20,20" VerticalAlignment="Bottom" Width="75" Click="BtnOk_Click"/>
+        <Button x:Name="btnClose" Content="_Close" HorizontalAlignment="right" Margin="20,20,20,20" VerticalAlignment="Bottom" Width="75" Click="BtnClose_Click"/>
+        <Button x:Name="btnOk" Content="_Ok" HorizontalAlignment="Left" Margin="20,20,20,20" VerticalAlignment="Bottom" Width="75" Click="BtnOk_Click"/>
 
     </Grid>
 </Window>

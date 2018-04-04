@@ -11,6 +11,15 @@ using TrueMarbleData;
 
 namespace TrueMarbleBiz
 {
+    /// <summary>
+    /// TMBizControllerImpl 
+    /// implements TMBizController
+    /// 
+    /// Biz Tier server for true marble
+    /// verifies integrity of the image tiles
+    /// 
+    /// stores history of GUI client
+    /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
                         UseSynchronizationContext = false)]
     class TMBizControllerImpl : ITMBizController
@@ -19,8 +28,10 @@ namespace TrueMarbleBiz
         private BrowseHistory m_hist;
         private delegate bool VerifyOperation();
         
-        // Constructor for TMBizController
-        // creates channel to Data server
+        /// <summary>
+        /// Constructor for TMBizController
+        /// creates channel to Data server
+        /// </summary>
         TMBizControllerImpl()
         {
             ChannelFactory<ITMDataController> channelFactory;
@@ -39,21 +50,42 @@ namespace TrueMarbleBiz
             m_hist = new BrowseHistory();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="zoom"></param>
+        /// <returns></returns>
         public int GetNumTilesAcross(int zoom)
         {
             return m_tmData.GetNumTilesAcross(zoom);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="zoom"></param>
+        /// <returns></returns>
         public int GetNumTilesDown(int zoom)
         {
             return m_tmData.GetNumTilesDown(zoom);
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="zoom"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public byte[] LoadTile(int zoom, int x, int y)
         {
             return m_tmData.LoadTile(zoom, x, y);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns name="verified"></returns>
         public bool VerifyTiles()
         {
             MemoryStream memoryStream;
@@ -82,6 +114,9 @@ namespace TrueMarbleBiz
             return verified;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void VerifyTilesAsync()
         {
             VerifyOperation addDel = VerifyTiles;       // point delegate at a function to be called asynchronously
@@ -94,6 +129,10 @@ namespace TrueMarbleBiz
             Console.WriteLine("Waiting for Verification");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="res"></param>
         public void VerifyTiles_OnComplete(IAsyncResult res)
         {
             bool iResult = false;       // result of verification
@@ -119,11 +158,23 @@ namespace TrueMarbleBiz
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="zoom"></param>
         public void AddHistEntry(int x, int y, int zoom)
         {
             m_hist.AddHistEntry(x, y, zoom);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="zoom"></param>
         public void GetCurrHistEntry(out int x,  out int y, out int zoom)
         {
             HistEntry entry = m_hist.GetCurrHist();
@@ -132,6 +183,12 @@ namespace TrueMarbleBiz
             zoom = entry.Zoom;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="zoom"></param>
         public void HistBack(out int x, out int y, out int zoom)
         {
             HistEntry entry = m_hist.GetHistBack();
@@ -140,6 +197,12 @@ namespace TrueMarbleBiz
             zoom = entry.Zoom;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="zoom"></param>
         public void HistForward(out int x, out int y, out int zoom)
         {
             HistEntry entry = m_hist.GetHistForward();
@@ -148,11 +211,19 @@ namespace TrueMarbleBiz
             zoom = entry.Zoom;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public BrowseHistory GetFullHistory()
         {
             return m_hist;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hist"></param>
         public void SetFullHistory(BrowseHistory hist)
         {
             m_hist = hist;

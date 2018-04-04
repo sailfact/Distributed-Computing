@@ -22,8 +22,10 @@ namespace TrueMarbleGUI
         private int m_xValue;
         private int m_yValue;
 
-        // MainWindow Constructor
-        // sets default values of member fields
+        /// <summary>
+        /// MainWindow Constructor
+        /// sets default values of member fields
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -32,9 +34,13 @@ namespace TrueMarbleGUI
             m_yValue = 0;
         }
 
-        // Window_Loaded 
-        // first event fired 
-        // binds server and initialises m_tmData
+        /// <summary>
+        /// Window_Loaded 
+        /// first event fired 
+        /// binds server and initialises m_tmData
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DuplexChannelFactory<ITMBizController> channelFactory;
@@ -56,21 +62,29 @@ namespace TrueMarbleGUI
             {
                 MessageBox.Show("Error Creating Channel Factory : "+ ne.Message);
             }
-
+            
             m_biz.VerifyTilesAsync();
         }
 
-        // BtnLoad_Click
-        // event handler for when btnLoad is clicked
+        /// <summary>
+        /// BtnLoad_Click
+        /// event handler for when btnLoad is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnLoad_Click(object sender, RoutedEventArgs e)
         {
             LoadTile(true);     //  loads tile 
         }
 
-        // SldZoom_ValueChanged
-        // event handler for when sldZoom is changed
-        // updates m_zoom and changes m_xValue and m_yValye 
-        // to avoid boundary errors
+        /// <summary>
+        /// SldZoom_ValueChanged
+        /// event handler for when sldZoom is changed
+        /// updates m_zoom and changes m_xValue and m_yValye 
+        /// to avoid boundary errors
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SldZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (m_biz != null)
@@ -97,9 +111,13 @@ namespace TrueMarbleGUI
             }
         }
 
-        // BtnSouth_Click
-        // event handler for when btnSouth is clicked
-        // increments the y value rolls back to end if it exceeds lower limit 
+        /// <summary>
+        /// BtnSouth_Click
+        /// event handler for when btnSouth is clicked
+        /// increments the y value rolls back to end if it exceeds lower limit 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnSouth_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -121,9 +139,13 @@ namespace TrueMarbleGUI
             LoadTile(true);     // reload the tile
         }
 
-        // BtnWest_Click
-        // event handler for when btnWest is clicked
-        // increments x value rolls back to end if it exceeds lower limit 
+        /// <summary>
+        /// BtnWest_Click
+        /// event handler for when btnWest is clicked
+        /// increments x value rolls back to end if it exceeds lower limit 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnWest_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -145,9 +167,13 @@ namespace TrueMarbleGUI
             LoadTile(true);     // reload the tile
         }
 
-        // BtnNorth_Click
-        // event handler for when btnNorth is clicked
-        // increments y value rolls back to start if upper limit is exceeded
+        /// <summary>
+        /// BtnNorth_Click
+        /// event handler for when btnNorth is clicked
+        /// increments y value rolls back to start if upper limit is exceeded
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnNorth_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -169,9 +195,13 @@ namespace TrueMarbleGUI
             LoadTile(true);     // reload the tile
         }
 
-        // BtnEast_Click
-        // event handler for when btnEast is clicked
-        // increments x value rolls back to start if upper limit is exceeded
+        /// <summary>
+        /// BtnEast_Click
+        /// event handler for when btnEast is clicked
+        /// increments x value rolls back to start if upper limit is exceeded
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnEast_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -192,10 +222,14 @@ namespace TrueMarbleGUI
 
             LoadTile(true);     // reload the tile
         }
-
-        // LoadTile
-        // Loads the tile from m_tmData 
-        // is called but event handlers when conditions change
+        
+        /// <summary>
+        /// LoadTile
+        /// Loads the tile from m_tmData 
+        /// is called but event handlers when conditions change
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LoadTile(bool addToHist)
         {
             if (m_biz != null)       // only load if m_tmData is not null
@@ -227,6 +261,13 @@ namespace TrueMarbleGUI
             }
         }
         
+        /// <summary>
+        /// BtnBack_Click 
+        /// sets x,y,z from history
+        /// and loads last tile
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnBack_Click(object sender, RoutedEventArgs e)
         {
             m_biz.HistBack(out m_xValue, out m_yValue, out m_zoom);
@@ -234,6 +275,13 @@ namespace TrueMarbleGUI
             LoadTile(false);
         }
 
+        /// <summary>
+        /// BtnForward_Click 
+        /// sets x,y,z from history
+        /// and loads next tile
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnForward_Click(object sender, RoutedEventArgs e)
         {
             m_biz.HistForward(out m_xValue, out m_yValue, out m_zoom);
@@ -241,6 +289,11 @@ namespace TrueMarbleGUI
             LoadTile(false);
         }
 
+        /// <summary>
+        /// Call back funstion prints whether verification of 
+        /// tiles where valid
+        /// </summary>
+        /// <param name="result"></param>
         public void OnVerificationComplete(bool result)
         {
             if (result)
@@ -253,6 +306,12 @@ namespace TrueMarbleGUI
             }
         }
 
+        /// <summary>
+        /// MenuItem_Click_Save
+        /// gets the BrowseHistory object and serializes it
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_Click_Save(object sender, RoutedEventArgs e)
         {
             BrowseHistory browseHistory = m_biz.GetFullHistory();
@@ -277,7 +336,13 @@ namespace TrueMarbleGUI
             }
         }
 
-        private void MenuItem_Click_Load (object sender, RoutedEventArgs e)
+        /// <summary>
+        /// MenuItem_Click_Load
+        /// loads saved BrowseHistory
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click_Load(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -298,10 +363,23 @@ namespace TrueMarbleGUI
             }
         }
 
+        /// <summary>
+        /// MenuItem_Click
+        /// menu item to open history window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            DisplayHistory histWind = new DisplayHistory(m_biz.GetFullHistory());
-            histWind.ShowDialog();
+            try
+            {
+                DisplayHistory histWind = new DisplayHistory(m_biz.GetFullHistory());
+                histWind.ShowDialog();
+            }
+            catch (InvalidOperationException oe)
+            {
+                MessageBox.Show(oe.Message);
+            }
         }
     }
 }

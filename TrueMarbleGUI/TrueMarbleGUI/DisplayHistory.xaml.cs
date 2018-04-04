@@ -25,28 +25,52 @@ namespace TrueMarbleGUI
         private int m_y;
         private int m_zoom;
 
+
         public DisplayHistory(BrowseHistory hist)
         {
             m_history = hist;
             InitializeComponent();
         }
 
+        /// <summary>
+        /// BtnClose_Click
+        /// closes window sends back false
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;            // future functionality
             this.Close();
         }
 
+        /// <summary>
+        /// Window_Loaded
+        /// assigns history to items source
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             IvwHistory.ItemsSource = m_history.History;
         }
-
+        /// <summary>
+        /// IvwHistory_SelectionChanged
+        /// does nothing yet
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void IvwHistory_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // future functionality
         }
 
+        /// <summary>
+        /// BtnOk_Click
+        /// closes window sends back true
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnOk_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;            // future functionality

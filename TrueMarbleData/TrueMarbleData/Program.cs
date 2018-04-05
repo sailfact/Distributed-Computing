@@ -9,34 +9,42 @@ namespace TrueMarbleData
     {
         static void Main(string[] args)
         {
-            ServiceHost host;
+            ServiceHost host = null;
             NetTcpBinding tcpBinding = new NetTcpBinding();
             string url = "net.tcp://localhost:50001/TMData";
 
-            // increases message quota to max       
-            tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
-            tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
-
-            host = new ServiceHost(typeof(TMDataControllerImpl));   // host the implementing class
-            host.AddServiceEndpoint(typeof(ITMDataController), tcpBinding, url);    // access via the interface class
-
             try        
             {
+                // increases message quota to max       
+                tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
+                tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
+
+                host = new ServiceHost(typeof(TMDataControllerImpl));   // host the implementing class
+                host.AddServiceEndpoint(typeof(ITMDataController), tcpBinding, url);    // access via the interface class
+                
                 host.Open();        // enter listening state ready for client requests
                 Console.WriteLine("Press Enter to exit");
                 Console.ReadLine(); // block waiting for client requests
             }
-            catch (ObjectDisposedException e1)
+            catch (FaultException e)
             {
-                throw new FaultException(e1.Message);
+                Console.WriteLine(e.Message);
             }
-            catch (TimeoutException e2)
+            catch (ArgumentNullException e)
             {
-                throw new FaultException(e2.Message);
+                Console.WriteLine(e.Message);
             }
-            catch (CommunicationObjectFaultedException e3)
+            catch (ObjectDisposedException e)
             {
-                throw new FaultException(e3.Message);
+                Console.WriteLine(e.Message);
+            }
+            catch (TimeoutException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (CommunicationObjectFaultedException e)
+            {
+                Console.WriteLine(e.Message);
             }
             finally
             {

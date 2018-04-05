@@ -38,9 +38,7 @@ namespace TrueMarbleData
         /// <returns></returns>
         public int GetNumTilesAcross(int zoom)
         {
-            int across, down;
-
-            if (TMDLLWrapper.GetNumTiles(zoom, out across, out down) != 1)
+            if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
             {
                 throw new FaultException("Error in function 'TMDLLWrapper.GetNumTiles'");
             }
@@ -55,9 +53,8 @@ namespace TrueMarbleData
         /// <param name="zoom"></param>
         /// <returns></returns>
         public int GetNumTilesDown(int zoom)
-        {
-            int across, down;
-            if (TMDLLWrapper.GetNumTiles(zoom, out across, out down) != 1)
+        {;
+            if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
             {
                 throw new FaultException("Error in function 'TMDLLWrapper.GetNumTiles'");
             }
@@ -74,8 +71,7 @@ namespace TrueMarbleData
         /// <returns></returns>
         public int GetTileHeight()
         {
-            int height, width;
-            if (TMDLLWrapper.GetTileSize(out width, out height) != 1)
+            if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
             {
                 throw new FaultException("Error in function 'TMDLLWrapper.GetTileSize'");
             }
@@ -91,8 +87,7 @@ namespace TrueMarbleData
         /// <returns></returns>
         public int GetTileWidth()
         {
-            int height, width;
-            if (TMDLLWrapper.GetTileSize(out width, out height) != 1)
+            if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
             {
                 throw new FaultException("Error in function 'TMDLLWrapper.GetTileSize'");
             }
@@ -112,14 +107,12 @@ namespace TrueMarbleData
         /// <returns></returns>
         public byte[] LoadTile(int zoom, int x, int y)
         {
-            int height;
-            int width;
             byte[] array = null;
             int size;
 
-            if (TMDLLWrapper.GetTileSize(out width, out height) != 1)      // get height and width
+            if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)      // get height and width
             {
-                throw new FaultException("Error in function 'TMDLLWrapper.GetTileSize'");
+                throw new FaultException("Error : ");
             }
 
             size = width * height * 3;  // determine size
@@ -128,12 +121,12 @@ namespace TrueMarbleData
             // check if coordinates are valid
             if (!CheckCoordinates(zoom, x, y))
             {
-                throw new FaultException("Error in function LoadTiles 'Coordinates Are Not Valid");
+                throw new FaultException("Error : 'Coordinates Are Not Valid");
             }
 
             if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
             {
-                throw new FaultException("Error in function 'TMDLLWrapper.GetTileImageAsRawJPG'");
+                throw new FaultException("Error: retrieving Raw JPG");
             }
 
             return array;

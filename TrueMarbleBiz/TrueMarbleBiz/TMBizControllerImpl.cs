@@ -37,17 +37,32 @@ namespace TrueMarbleBiz
             ChannelFactory<ITMDataController> channelFactory;
 
             NetTcpBinding tcpBinding = new NetTcpBinding();
-            string url = "net.tcp://localhost:50001/TMData";    
+            string url = "net.tcp://localhost:50001/TMData";
+            try
+            {
+                // incease default message size quota
+                tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
+                tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
 
-            // incease default message size quota
-            tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
-            tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
+                // bind channel to url
+                channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);   // bind url to channel factory
 
-            // bind channel to url
-            channelFactory = new ChannelFactory<ITMDataController>(tcpBinding, url);   // bind url to channel factory
-            
-            m_tmData = channelFactory.CreateChannel();  // create true marbledata on remote server
-            m_hist = new BrowseHistory();
+                m_tmData = channelFactory.CreateChannel();  // create true marbledata on remote server
+                m_hist = new BrowseHistory();
+            }
+            catch (ArgumentException e1)
+            {
+                Console.WriteLine(e1.Message);
+            }
+            catch (CommunicationException e2)
+            {
+                Console.WriteLine(e2.Message);
+            }
+            catch (InvalidOperationException e3)
+            {
+                Console.WriteLine(e3.Message);
+            }
+
         }
 
         /// <summary>

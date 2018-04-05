@@ -21,10 +21,6 @@ namespace TrueMarbleGUI
     public partial class DisplayHistory : Window
     {
         private BrowseHistory m_history;
-        private int m_x;
-        private int m_y;
-        private int m_zoom;
-
 
         public DisplayHistory(BrowseHistory hist)
         {

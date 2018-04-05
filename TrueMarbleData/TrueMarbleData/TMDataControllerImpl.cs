@@ -7,25 +7,35 @@ using System.Threading.Tasks;
 
 namespace TrueMarbleData
 {
-    // server object that inplements the interface for the dll functions
+    /// <summary>
+    /// server object that inplements the interface for the dll functions
+    /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
                         UseSynchronizationContext = false)]
     internal class TMDataControllerImpl : ITMDataController
     {
-        // Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
         TMDataControllerImpl()
         {
             Console.WriteLine("New Client has Connected");
         }
 
-        //Deconstructor
+        /// <summary>
+        /// Deconstructor
+        /// </summary>
         ~TMDataControllerImpl()
         {
             Console.WriteLine("Client Disconnected");
         }
 
-        // GetNumTilesAcross
-        // returns number of tiles across depending on the level of zoom
+        /// <summary>
+        /// GetNumTilesAcross
+        /// returns number of tiles across depending on the level of zoom
+        /// </summary>
+        /// <param name="zoom"></param>
+        /// <returns></returns>
         public int GetNumTilesAcross(int zoom)
         {
             int across, down;
@@ -38,8 +48,12 @@ namespace TrueMarbleData
             return across;
         }
 
-        // GetNumTilesDown
-        // returns number of tiles down depending on the level of zoom
+        /// <summary>
+        /// GetNumTilesDown
+        /// returns number of tiles down depending on the level of zoom
+        /// </summary>
+        /// <param name="zoom"></param>
+        /// <returns></returns>
         public int GetNumTilesDown(int zoom)
         {
             int across, down;
@@ -51,9 +65,13 @@ namespace TrueMarbleData
             return down;
         }
 
-        // GetTileHeight
-        // returns tile height
-        // always 256 
+        /// <summary>
+        /// GetTileHeight
+        /// returns tile height
+        /// always 256 
+        /// </summary>
+        /// <param name="zoom"></param>
+        /// <returns></returns>
         public int GetTileHeight()
         {
             int height, width;
@@ -65,9 +83,12 @@ namespace TrueMarbleData
             return height;
         }
 
-        // GetTileWidth
-        // returns tile width 
-        // always 256
+        /// <summary>
+        /// GetTileWidth
+        /// returns tile width 
+        /// always 256
+        /// </summary>
+        /// <returns></returns>
         public int GetTileWidth()
         {
             int height, width;
@@ -80,9 +101,15 @@ namespace TrueMarbleData
         }
 
 
-        // LoadTile
-        // takes zoom, x, and y
-        // returns byte array containing the jpg
+        /// <summary>
+        /// LoadTile
+        /// takes zoom, x, and y
+        /// returns byte array containing the jpg
+        /// </summary>
+        /// <param name="zoom"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public byte[] LoadTile(int zoom, int x, int y)
         {
             int height;
@@ -112,6 +139,14 @@ namespace TrueMarbleData
             return array;
         }
 
+        /// <summary>
+        /// CheckCoordinates
+        /// checks whether coordinates are valid
+        /// </summary>
+        /// <param name="zoom"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         private bool CheckCoordinates(int zoom, int x, int y)
         {
             return (x < GetNumTilesAcross(zoom))&&(y < GetNumTilesDown(zoom) );

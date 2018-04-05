@@ -51,7 +51,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// GetNumTilesAcross
+        /// returns the number of tiles accross for the zoom level
         /// </summary>
         /// <param name="zoom"></param>
         /// <returns></returns>
@@ -61,7 +62,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// GetNumTilesDown
+        /// returns the number of tiles down for the zoom level
         /// </summary>
         /// <param name="zoom"></param>
         /// <returns></returns>
@@ -69,9 +71,10 @@ namespace TrueMarbleBiz
         {
             return m_tmData.GetNumTilesDown(zoom);
         }
-        
+
         /// <summary>
-        /// 
+        /// Loadtile
+        /// returns tile for given zoom,x,y
         /// </summary>
         /// <param name="zoom"></param>
         /// <param name="x"></param>
@@ -83,9 +86,10 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// VerifyTiles
+        /// opens every tile returns false if one is corrupt
         /// </summary>
-        /// <returns name="verified"></returns>
+        /// <returns></returns>
         public bool VerifyTiles()
         {
             MemoryStream memoryStream;
@@ -115,7 +119,9 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// VerifyTilesAsync
+        /// calls VerifyTiles Asyncronously
+        /// sets callback function
         /// </summary>
         public void VerifyTilesAsync()
         {
@@ -130,7 +136,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// VerifyTiles_OnComplete
+        /// gets result for Asyncronous call and sends it to client
         /// </summary>
         /// <param name="res"></param>
         public void VerifyTiles_OnComplete(IAsyncResult res)
@@ -159,7 +166,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// AddHistEntry
+        /// adds a history entry to browse history
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -170,7 +178,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// GetCurrHistEntry
+        /// returns x,y,zoom from current history
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -184,7 +193,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// HistBack
+        /// returns x,y,zoom from previous entry
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -198,7 +208,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// HistForward
+        /// returns x,y,zoom from next entry
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -212,7 +223,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// GetFullHistory
+        /// returns history object
         /// </summary>
         /// <returns></returns>
         public BrowseHistory GetFullHistory()
@@ -221,7 +233,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// SetFullHistory
+        /// sets history object
         /// </summary>
         /// <param name="hist"></param>
         public void SetFullHistory(BrowseHistory hist)

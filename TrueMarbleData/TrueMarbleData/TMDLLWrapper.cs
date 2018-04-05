@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace TrueMarbleData
 {
-    // wrapper class to declare all function from the DLL
+    /// <summary>
+    /// wrapper class to declare all function from the DLL
+    /// </summary>
     class TMDLLWrapper
     {
         [DllImport("TrueMarbleDLL.dll")]

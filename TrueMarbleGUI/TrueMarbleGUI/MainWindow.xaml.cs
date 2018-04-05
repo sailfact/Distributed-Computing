@@ -47,20 +47,24 @@ namespace TrueMarbleGUI
 
             NetTcpBinding tcpBinding = new NetTcpBinding();
             string url = "net.tcp://localhost:50002/TMBiz";
-
-            // incease default message size quota
-            tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
-            tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
-
-            // bind channel to url
             try
             {
+                // incease default message size quota
+                tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
+                tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
+
+                // bind channel to url
+            
                 channelFactory = new DuplexChannelFactory<ITMBizController>(new InstanceContext(this), tcpBinding, url);   // bind url to channel factory
                 m_biz = channelFactory.CreateChannel();  // create true marblebiz on remote server
             }
-            catch (ArgumentNullException ne)
+            catch (ArgumentNullException e1)
             {
-                MessageBox.Show("Error Creating Channel Factory : "+ ne.Message);
+                MessageBox.Show("Error Connecting to Server\n"+ e1.Message);
+            }
+            catch (InvalidOperationException e2)
+            {
+                MessageBox.Show("Error Connecting to Server\n" + e2.Message);
             }
             
             m_biz.VerifyTilesAsync();
@@ -104,7 +108,7 @@ namespace TrueMarbleGUI
                 }
                 catch (CommunicationException ce)       // if server died
                 {
-                    MessageBox.Show("Error" + ce.Message);
+                    MessageBox.Show("Error Connecting to server" + ce.Message);
                 }
 
                 LoadTile(true);     // reload the tile
@@ -320,7 +324,7 @@ namespace TrueMarbleGUI
 
             try
             {
-                fileStream = new FileStream("C:/Users/Sailf/History.xml", FileMode.Create, FileAccess.Write);
+                fileStream = new FileStream("C:/History.xml", FileMode.Create, FileAccess.Write);
                 serializer = new DataContractSerializer(typeof(BrowseHistory));
                 serializer.WriteObject(fileStream, browseHistory);
 
@@ -346,7 +350,7 @@ namespace TrueMarbleGUI
         {
             try
             {
-                FileStream fileStream = new FileStream("C:/Users/Sailf/History.xml", FileMode.Open, FileAccess.Read);
+                FileStream fileStream = new FileStream("C:/History.xml", FileMode.Open, FileAccess.Read);
                 DataContractSerializer serializer = new DataContractSerializer(typeof(BrowseHistory));
 
                 BrowseHistory browseHistory = (BrowseHistory)serializer.ReadObject(fileStream);

@@ -49,7 +49,7 @@ namespace TrueMarbleData
             }
             finally
             {
-                host.Close();   // close service host
+                host.Close();
             }
         }
     }

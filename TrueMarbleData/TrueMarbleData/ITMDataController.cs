@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace TrueMarbleData
 {
-    /// <summary>
-    /// Remote interface for DLL functions
-    /// </summary>
+    // Remote interface for DLL functions
     [ServiceContract]
     public interface ITMDataController
     {

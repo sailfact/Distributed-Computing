@@ -10,14 +10,15 @@ namespace TrueMarbleData
     /// <summary>
     /// server object that inplements the interface for the dll functions
     /// </summary>
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
-                        UseSynchronizationContext = false)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, 
+        ConcurrencyMode = ConcurrencyMode.Multiple,
+        UseSynchronizationContext = false)]
     internal class TMDataControllerImpl : ITMDataController
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        TMDataControllerImpl()
+        public TMDataControllerImpl()
         {
             Console.WriteLine("New Client has Connected");
         }

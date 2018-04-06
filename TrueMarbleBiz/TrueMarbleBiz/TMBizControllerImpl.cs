@@ -109,35 +109,28 @@ namespace TrueMarbleBiz
         public bool VerifyTiles()
         {
             bool verified = true;
-            try
-            {
-                MemoryStream memoryStream;
-                JpegBitmapDecoder decoder;
+            
+            MemoryStream memoryStream;
+            JpegBitmapDecoder decoder;
 
-                for (int zoom = 0; (zoom <= 6 && verified); zoom++)
+            for (int zoom = 0; (zoom <= 6 && verified); zoom++)
+            {
+                for (int x = 0; (x < m_tmData.GetNumTilesAcross(zoom) - 1 && verified); x++)
                 {
-                    for (int x = 0; (x < m_tmData.GetNumTilesAcross(zoom) - 1 && verified); x++)
+                    for (int y = 0; (y < m_tmData.GetNumTilesDown(zoom) - 1 && verified); y++)
                     {
-                        for (int y = 0; (y < m_tmData.GetNumTilesDown(zoom) - 1 && verified); y++)
+                        try
                         {
-                            try
-                            {
-                                memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
-                                decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
-                            }
-                            catch
-                            {
-                                // if it fails it probably is corrupt
-                                return false;
-                            }
+                            memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
+                            decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
+                        }
+                        catch
+                        {
+                            // if it fails it probably is corrupt
+                            return false;
                         }
                     }
                 }
-            }
-            catch (EndpointNotFoundException e1)
-            {
-                Console.WriteLine(e1.Message);
-                Environment.Exit(1);
             }
 
             return verified;

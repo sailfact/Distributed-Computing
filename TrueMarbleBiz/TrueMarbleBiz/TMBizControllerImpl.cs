@@ -179,7 +179,7 @@ namespace TrueMarbleBiz
             }
             catch (CommunicationObjectAbortedException ae)
             {
-                Console.WriteLine("ERROR : {0}",ae.Message);
+                Console.WriteLine(ae.Message);
             }
         }
 

@@ -11,7 +11,7 @@ namespace TrueMarbleData
         {
             ServiceHost host = null;
             NetTcpBinding tcpBinding = new NetTcpBinding();
-            TMDataControllerImpl tMDataControllerImpl = new TMDataControllerImpl();
+            //TMDataControllerImpl tMDataControllerImpl = new TMDataControllerImpl();
             string url = "net.tcp://localhost:50001/TMData";
 
             try        
@@ -20,7 +20,7 @@ namespace TrueMarbleData
                 tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
                 tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
 
-                host = new ServiceHost(tMDataControllerImpl);   // host the implementing class
+                host = new ServiceHost(typeof(TMDataControllerImpl));   // host the implementing class
                 host.AddServiceEndpoint(typeof(ITMDataController), tcpBinding, url);    // access via the interface class
                 
                 host.Open();        // enter listening state ready for client requests

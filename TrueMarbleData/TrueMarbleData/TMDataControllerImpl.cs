@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,8 +11,7 @@ namespace TrueMarbleData
     /// <summary>
     /// server object that inplements the interface for the dll functions
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, 
-        ConcurrencyMode = ConcurrencyMode.Multiple,
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
         UseSynchronizationContext = false)]
     internal class TMDataControllerImpl : ITMDataController
     {
@@ -20,7 +20,7 @@ namespace TrueMarbleData
         /// </summary>
         public TMDataControllerImpl()
         {
-            Console.WriteLine("New Client has Connected");
+            Console.WriteLine("Server Created");
         }
 
         /// <summary>
@@ -106,6 +106,7 @@ namespace TrueMarbleData
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public byte[] LoadTile(int zoom, int x, int y)
         {
             byte[] array = null;

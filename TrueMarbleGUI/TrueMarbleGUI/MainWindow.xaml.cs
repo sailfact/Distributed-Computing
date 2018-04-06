@@ -57,17 +57,24 @@ namespace TrueMarbleGUI
             
                 channelFactory = new DuplexChannelFactory<ITMBizController>(new InstanceContext(this), tcpBinding, url);   // bind url to channel factory
                 m_biz = channelFactory.CreateChannel();  // create true marblebiz on remote server
+
+                m_biz.VerifyTilesAsync();
             }
             catch (ArgumentNullException e1)
             {
-                MessageBox.Show("Error Connecting to Server\n"+ e1.Message);
+                MessageBox.Show("Error Connecting to Server\n\n" + e1.Message);
+                this.Close();
             }
             catch (InvalidOperationException e2)
             {
-                MessageBox.Show("Error Connecting to Server\n" + e2.Message);
+                MessageBox.Show("Error Connecting to Server\n\n" + e2.Message);
+                this.Close();
             }
-            
-            m_biz.VerifyTilesAsync();
+            catch (EndpointNotFoundException e3)
+            {
+                MessageBox.Show("Error Connecting to Server\n\n" + e3.Message);
+                this.Close();
+            }
         }
 
         /// <summary>
@@ -252,15 +259,18 @@ namespace TrueMarbleGUI
                 }
                 catch (FileFormatException fe)  // catch decoder if it fails
                 {
-                    MessageBox.Show(fe.Message);
+                    MessageBox.Show("An Unexpected Error Occurred Please Try Again Later\n\n"+fe.Message);
+                    this.Close();
                 }
                 catch (FaultException fe)   // if LoadTiles fails show the error message and continue
                 {
                     MessageBox.Show(fe.Message);
+                    this.Close();
                 }
                 catch (CommunicationException ce)   // catch exception if server died for some reason
                 {
                     MessageBox.Show("Error" + ce.Message);
+                    this.Close();
                 }
             }
         }
@@ -324,7 +334,7 @@ namespace TrueMarbleGUI
 
             try
             {
-                fileStream = new FileStream("C:/History.xml", FileMode.Create, FileAccess.Write);
+                fileStream = new FileStream("C:/Users/Ross/History.xml", FileMode.Create, FileAccess.Write);
                 serializer = new DataContractSerializer(typeof(BrowseHistory));
                 serializer.WriteObject(fileStream, browseHistory);
 
@@ -350,7 +360,7 @@ namespace TrueMarbleGUI
         {
             try
             {
-                FileStream fileStream = new FileStream("C:/History.xml", FileMode.Open, FileAccess.Read);
+                FileStream fileStream = new FileStream("C:/Users/Ross/History.xml", FileMode.Open, FileAccess.Read);
                 DataContractSerializer serializer = new DataContractSerializer(typeof(BrowseHistory));
 
                 BrowseHistory browseHistory = (BrowseHistory)serializer.ReadObject(fileStream);

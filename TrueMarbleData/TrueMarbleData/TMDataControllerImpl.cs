@@ -108,25 +108,29 @@ namespace TrueMarbleData
         public byte[] LoadTile(int zoom, int x, int y)
         {
             byte[] array = null;
-            int size;
-
-            if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)      // get height and width
+            int height = 0;
+            int width = 0;
+            try
             {
-                throw new FaultException("Error : ");
+                height = GetTileHeight();    // get height and width
+                width = GetTileWidth();
+            }
+            catch (FaultException e1)
+            {
+                Console.WriteLine(e1.Message);
+                Environment.Exit(1);
             }
 
-            size = width * height * 3;  // determine size
+            int size = width * height * 3;  // determine size
             array = new byte[size];     // allocate buffer
 
             // check if coordinates are valid
-            if (!CheckCoordinates(zoom, x, y))
+            if (CheckCoordinates(zoom, x, y))
             {
-                throw new FaultException("Error : 'Coordinates Are Not Valid");
-            }
-
-            if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
-            {
-                throw new FaultException("Error: retrieving Raw JPG");
+                if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
+                {
+                    throw new FaultException("Error: retrieving Raw JPG");
+                }
             }
 
             return array;
@@ -142,7 +146,7 @@ namespace TrueMarbleData
         /// <returns></returns>
         private bool CheckCoordinates(int zoom, int x, int y)
         {
-            return (x < GetNumTilesAcross(zoom))&&(y < GetNumTilesDown(zoom) );
+            return (x < GetNumTilesAcross(zoom)) && (y < GetNumTilesDown(zoom));
         }
     }
 }

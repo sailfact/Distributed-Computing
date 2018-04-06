@@ -97,6 +97,7 @@ namespace TrueMarbleBiz
         /// <returns></returns>
         public byte[] LoadTile(int zoom, int x, int y)
         {
+
             return m_tmData.LoadTile(zoom, x, y);
         }
 
@@ -107,27 +108,36 @@ namespace TrueMarbleBiz
         /// <returns></returns>
         public bool VerifyTiles()
         {
-            MemoryStream memoryStream;
-            JpegBitmapDecoder decoder;
             bool verified = true;
-            for (int zoom = 0; (zoom <= 6 && verified); zoom++)
+            try
             {
-                for (int x = 0; (x < m_tmData.GetNumTilesAcross(zoom)-1&&verified); x ++)
+                MemoryStream memoryStream;
+                JpegBitmapDecoder decoder;
+
+                for (int zoom = 0; (zoom <= 6 && verified); zoom++)
                 {
-                    for ( int y = 0; (y < m_tmData.GetNumTilesDown(zoom)-1&&verified); y ++)
+                    for (int x = 0; (x < m_tmData.GetNumTilesAcross(zoom) - 1 && verified); x++)
                     {
-                        try
+                        for (int y = 0; (y < m_tmData.GetNumTilesDown(zoom) - 1 && verified); y++)
                         {
-                            memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
-                            decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
-                        }
-                        catch 
-                        {
-                            // if it fails it probably is corrupt
-                            verified = false;
+                            try
+                            {
+                                memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
+                                decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
+                            }
+                            catch
+                            {
+                                // if it fails it probably is corrupt
+                                return false;
+                            }
                         }
                     }
                 }
+            }
+            catch (EndpointNotFoundException e1)
+            {
+                Console.WriteLine(e1.Message);
+                Environment.Exit(1);
             }
 
             return verified;
@@ -255,6 +265,7 @@ namespace TrueMarbleBiz
         public void SetFullHistory(BrowseHistory hist)
         {
             m_hist = hist;
+            m_hist.CurEntryIdx = m_hist.History.Count()-1;      // set idx so history is behind it
         }
     }
 }

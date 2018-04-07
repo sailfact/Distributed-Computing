@@ -57,17 +57,23 @@ namespace TrueMarbleGUI
             
                 channelFactory = new DuplexChannelFactory<ITMBizController>(new InstanceContext(this), tcpBinding, url);   // bind url to channel factory
                 m_biz = channelFactory.CreateChannel();  // create true marblebiz on remote server
+                m_biz.VerifyTilesAsync();
             }
             catch (ArgumentNullException e1)
             {
-                MessageBox.Show("Error Connecting to Server\n"+ e1.Message);
+                MessageBox.Show("Error Connecting to Server, please  try again later\n\nError\n" + e1.Message);
+                this.Close();
             }
             catch (InvalidOperationException e2)
             {
-                MessageBox.Show("Error Connecting to Server\n" + e2.Message);
+                MessageBox.Show("Error Connecting to Server, please  try again later\n\nError\n" + e2.Message);
+                this.Close();
             }
-            
-            m_biz.VerifyTilesAsync();
+            catch (EndpointNotFoundException e3)
+            {
+                MessageBox.Show("Service not avialable at this time, please  try again later\n\nError\n" + e3.Message);
+                this.Close();
+            }
         }
 
         /// <summary>
@@ -108,7 +114,7 @@ namespace TrueMarbleGUI
                 }
                 catch (CommunicationException ce)       // if server died
                 {
-                    MessageBox.Show("Error Connecting to server" + ce.Message);
+                    MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
                 }
 
                 LoadTile(true);     // reload the tile
@@ -137,7 +143,7 @@ namespace TrueMarbleGUI
             }
             catch (CommunicationException ce)   // catch if server dies
             {
-                MessageBox.Show("Error" + ce.Message);
+                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
             }
 
             LoadTile(true);     // reload the tile
@@ -165,7 +171,7 @@ namespace TrueMarbleGUI
             }
             catch (CommunicationException ce)      // catch if server dies
             {
-                MessageBox.Show("Error" + ce.Message);
+                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
             }
 
             LoadTile(true);     // reload the tile
@@ -193,7 +199,7 @@ namespace TrueMarbleGUI
             }   
             catch (CommunicationException ce)      // catch if server dies
             {
-                MessageBox.Show("Error"+ce.Message);
+                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
             }
 
             LoadTile(true);     // reload the tile
@@ -221,7 +227,7 @@ namespace TrueMarbleGUI
             }
             catch (CommunicationException ce)       // catch if server dies
             {
-                MessageBox.Show("Error" + ce.Message);
+                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
             }
 
             LoadTile(true);     // reload the tile
@@ -260,7 +266,7 @@ namespace TrueMarbleGUI
                 }
                 catch (CommunicationException ce)   // catch exception if server died for some reason
                 {
-                    MessageBox.Show("Error" + ce.Message);
+                    MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
                 }
             }
         }
@@ -306,7 +312,7 @@ namespace TrueMarbleGUI
             }
             else
             {
-                MessageBox.Show("Images Corrupted");
+                MessageBox.Show("Images Where Not Verified");
             }
         }
 
@@ -319,24 +325,26 @@ namespace TrueMarbleGUI
         private void MenuItem_Click_Save(object sender, RoutedEventArgs e)
         {
             BrowseHistory browseHistory = m_biz.GetFullHistory();
-            FileStream fileStream;
+            FileStream fileStream = null;
             DataContractSerializer serializer;
 
             try
             {
-                fileStream = new FileStream("C:/History.xml", FileMode.Create, FileAccess.Write);
+                fileStream = new FileStream("C:/Users/Public/History.xml", FileMode.Create, FileAccess.Write);
                 serializer = new DataContractSerializer(typeof(BrowseHistory));
                 serializer.WriteObject(fileStream, browseHistory);
-
-                fileStream.Close();
             }
             catch (UnauthorizedAccessException ua)
             {
-                MessageBox.Show(ua.Message);
+                MessageBox.Show("Error While Loading History Occurred\n\nError:\n" + ua.Message);
             }
             catch (IOException io)
             {
-                MessageBox.Show(io.Message);
+                MessageBox.Show("Error While Loading History Occurred\n\nError:\n" + io.Message);
+            }
+            finally
+            {
+                fileStream.Close();
             }
         }
 
@@ -348,22 +356,30 @@ namespace TrueMarbleGUI
         /// <param name="e"></param>
         private void MenuItem_Click_Load(object sender, RoutedEventArgs e)
         {
+            BrowseHistory browseHistory = null;
+            FileStream fileStream = null;
+            DataContractSerializer serializer;
             try
             {
-                FileStream fileStream = new FileStream("C:/History.xml", FileMode.Open, FileAccess.Read);
-                DataContractSerializer serializer = new DataContractSerializer(typeof(BrowseHistory));
+                fileStream = new FileStream("C:/Users/Public/History.xml", FileMode.Open, FileAccess.Read);
+                serializer = new DataContractSerializer(typeof(BrowseHistory));
 
-                BrowseHistory browseHistory = (BrowseHistory)serializer.ReadObject(fileStream);
-                fileStream.Close();
+                browseHistory = (BrowseHistory)serializer.ReadObject(fileStream);
                 m_biz.SetFullHistory(browseHistory);
             }
             catch (UnauthorizedAccessException ua)
             {
-                MessageBox.Show(ua.Message);
+                MessageBox.Show("Error While Loading History Occurred\n\nError:\n"+ua.Message);
+                m_biz.SetFullHistory(new BrowseHistory());  // set a new history object
             }
             catch (IOException io)
             {
-                MessageBox.Show(io.Message);
+                MessageBox.Show("Error While Loading History Occurred\n\nError:\n"+io.Message);
+                m_biz.SetFullHistory(new BrowseHistory());  // set a new history object
+            }
+            finally
+            {
+                fileStream.Close();
             }
         }
 
@@ -373,16 +389,31 @@ namespace TrueMarbleGUI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_Click_Hist(object sender, RoutedEventArgs e)
         {
             try
             {
                 DisplayHistory histWind = new DisplayHistory(m_biz.GetFullHistory());
                 histWind.ShowDialog();
             }
-            catch (InvalidOperationException oe)
+            catch (InvalidOperationException)
             {
-                MessageBox.Show(oe.Message);
+                MessageBox.Show("An Error Occurred while loading the history window\n");
+            }
+            catch (CommunicationObjectFaultedException )
+            {
+                MessageBox.Show("An Error Occurred while loading the history window\nThe Server has Faulted");
+                this.Close();
+            }
+            catch (CommunicationObjectAbortedException)
+            {
+                MessageBox.Show("An Error Occurred while loading the history window\nThe Server has Aborted");
+                this.Close();
+            }
+            catch (CommunicationException)
+            {
+                MessageBox.Show("An Error Occurred while loading the history window\nThe Server is Not Communicating");
+                this.Close();
             }
         }
     }

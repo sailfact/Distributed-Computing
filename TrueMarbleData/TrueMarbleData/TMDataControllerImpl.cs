@@ -11,7 +11,8 @@ namespace TrueMarbleData
     /// <summary>
     /// server object that inplements the interface for the dll functions
     /// </summary>
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple,
+    [ServiceBehavior(InstanceContextMode =InstanceContextMode.Single
+        ,ConcurrencyMode = ConcurrencyMode.Multiple,
         UseSynchronizationContext = false)]
     internal class TMDataControllerImpl : ITMDataController
     {

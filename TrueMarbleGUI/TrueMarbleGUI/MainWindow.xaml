@@ -22,5 +22,8 @@
                 <MenuItem Header="Load" HorizontalAlignment="Left" Height="17" Width="139" Click="MenuItem_Click_Load"/>
             </MenuItem>
         </Menu>
+        <Menu HorizontalAlignment="Left" Height="20" Margin="42,0,0,0" VerticalAlignment="Top" Width="63">
+            <MenuItem Header="History" Height="20" Width="63" Click="MenuItem_Click_Hist"/>
+        </Menu>
     </Grid>
 </Window>

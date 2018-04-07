@@ -91,11 +91,19 @@ namespace TrueMarbleBiz
         /// <param name="zoom"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        /// <returns></returns>
-        public byte[] LoadTile(int zoom, int x, int y)
+        /// <returns>
+        /// 1 = success
+        /// 0 = failure
+        /// </returns>
+        public int LoadTile(int zoom, int x, int y, byte[] array)
         {
+            if (m_tmData.LoadTile(zoom, x, y, array) != 1)
+            {
+                Console.WriteLine("Error: Loading tile for Data tier\n");
+                return 0;
+            }
 
-            return m_tmData.LoadTile(zoom, x, y);
+            return 1;
         }
 
         /// <summary>
@@ -105,19 +113,23 @@ namespace TrueMarbleBiz
         public bool VerifyTiles()
         {
             bool verified = true;
-            
             MemoryStream memoryStream;
             JpegBitmapDecoder decoder;
-
+            int across = 0;
+            int down = 0;
+            byte[] array = null;
             for (int zoom = 0; (zoom <= 6 && verified); zoom++)
             {
-                for (int x = 0; (x < m_tmData.GetNumTilesAcross(zoom) - 1 && verified); x++)
+                m_tmData.GetNumTilesAcross(zoom, out across);
+
+                m_tmData.GetNumTilesDown(zoom, out down);
+                for (int x = 0; (x < across - 1 && verified); x++)
                 {
-                    for (int y = 0; (y < m_tmData.GetNumTilesDown(zoom) - 1 && verified); y++)
+                    for (int y = 0; (y < down - 1 && verified); y++)
                     {
                         try
                         {
-                            memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
+                            memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y, array));
                             decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
                         }
                         catch

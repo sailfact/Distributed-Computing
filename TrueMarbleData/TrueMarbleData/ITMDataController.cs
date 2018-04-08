@@ -24,6 +24,6 @@ namespace TrueMarbleData
         int GetNumTilesDown(int zoom, out int down);
 
         [OperationContract]
-        int LoadTile(int zoom, int x, int y, byte[] array);
+        byte[] LoadTile(int zoom, int x, int y);
     }
 }

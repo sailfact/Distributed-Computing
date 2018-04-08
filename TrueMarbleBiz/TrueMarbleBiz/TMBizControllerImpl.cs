@@ -53,14 +53,18 @@ namespace TrueMarbleBiz
             catch (ArgumentException e1)
             {
                 Console.WriteLine(e1.Message);
+                Environment.Exit(1);
+                
             }
             catch (CommunicationException e2)
             {
                 Console.WriteLine(e2.Message);
+                Environment.Exit(1);
             }
             catch (InvalidOperationException e3)
             {
                 Console.WriteLine(e3.Message);
+                Environment.Exit(1);
             }
 
         }
@@ -69,37 +73,15 @@ namespace TrueMarbleBiz
         /// 
         /// </summary>
         /// <param name="zoom"></param>
-        /// <returns></returns>
-        public int GetNumTilesAcross(int zoom)
-        {
-            return m_tmData.GetNumTilesAcross(zoom);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="zoom"></param>
-        /// <returns></returns>
-        public int GetNumTilesDown(int zoom)
-        {
-            return m_tmData.GetNumTilesDown(zoom);
-        }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="zoom"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
         /// <returns>
         /// 1 = success
         /// 0 = failure
         /// </returns>
-        public int LoadTile(int zoom, int x, int y, byte[] array)
+        public int GetNumTilesAcross(int zoom, out int across)
         {
-            if (m_tmData.LoadTile(zoom, x, y, array) != 1)
+            if (m_tmData.GetNumTilesAcross(zoom, out across) != 1)
             {
-                Console.WriteLine("Error: Loading tile for Data tier\n");
+                Console.WriteLine("Error: Getting Num tiles across from data tier");
                 return 0;
             }
 
@@ -109,6 +91,49 @@ namespace TrueMarbleBiz
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="zoom"></param>
+        /// <returns>
+        /// 1 == success
+        /// 0 == failure
+        /// </returns>
+        public int GetNumTilesDown(int zoom, out int down)
+        {
+            if (m_tmData.GetNumTilesDown(zoom, out down) != 1)
+            {
+                Console.WriteLine("Error: Getting Num tiles down from data tier");
+                return 0;
+            }
+            return 1;
+        }
+        
+        /// <summary>
+        /// LoadTile
+        /// Loads tile from data tier and returns byte array
+        /// </summary>
+        /// <param name="zoom"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>
+        /// 1 = success
+        /// 0 = failure
+        /// </returns>
+        public byte[] LoadTile(int zoom, int x, int y)
+        {
+            try
+            {
+                return m_tmData.LoadTile(zoom, x, y);
+            }
+            catch (CommunicationException ce)
+            {
+                Console.WriteLine("Error While loading tile from server");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// VerifyTiles
+        /// loops through every tile coordinate and check whether they can be decoded
+        /// </summary>
         /// <returns name="verified"></returns>
         public bool VerifyTiles()
         {
@@ -117,25 +142,35 @@ namespace TrueMarbleBiz
             JpegBitmapDecoder decoder;
             int across = 0;
             int down = 0;
-            byte[] array = null;
             for (int zoom = 0; (zoom <= 6 && verified); zoom++)
             {
-                m_tmData.GetNumTilesAcross(zoom, out across);
+                if (m_tmData.GetNumTilesAcross(zoom, out across) != 1)
+                {
+                    Console.WriteLine("Error Gettiong tiles across from data tier");
+                    return false;
+                }
 
-                m_tmData.GetNumTilesDown(zoom, out down);
+                if (m_tmData.GetNumTilesDown(zoom, out down) != 1)
+                {
+                    Console.WriteLine("Error Getting tiles down from data tier");
+                    return false;
+                }
+
                 for (int x = 0; (x < across - 1 && verified); x++)
                 {
                     for (int y = 0; (y < down - 1 && verified); y++)
                     {
                         try
                         {
-                            memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y, array));
+                            
+                            memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
                             decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
                         }
                         catch
                         {
                             // if it fails it probably is corrupt
-                            return false;
+                            Console.WriteLine("Tile zoom={0}, x={1}, y={2} Corrupted",zoom, x, y);
+                            verified = false;
                         }
                     }
                 }
@@ -170,15 +205,16 @@ namespace TrueMarbleBiz
             ITMBizControllerCallback ob = null;     // remote client object reference
             AsyncResult asyncObj = (AsyncResult)res;    // result from async function
 
-            if (asyncObj.EndInvokeCalled == false)      // if EndInvoke() has not been called
-            {
-                addDel = (VerifyOperation)asyncObj.AsyncDelegate;   // gain access to delegate
-                ob = (ITMBizControllerCallback)asyncObj.AsyncState;     // get remote client obj reference
-                iResult = addDel.EndInvoke(asyncObj);   // retrieve result 
-            }
-
             try
             {
+                if (asyncObj.EndInvokeCalled == false)      // if EndInvoke() has not been called
+                {
+                    addDel = (VerifyOperation)asyncObj.AsyncDelegate;   // gain access to delegate
+                    ob = (ITMBizControllerCallback)asyncObj.AsyncState;     // get remote client obj reference
+                    iResult = addDel.EndInvoke(asyncObj);   // retrieve result 
+                }
+
+            
                 asyncObj.AsyncWaitHandle.Close();
                 ob.OnVerificationComplete(iResult);     // send result to client
             }
@@ -214,7 +250,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// HistBack
+        /// sets zoom,x,y to last hist entry
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -228,7 +265,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// HistForward
+        /// sets zoom,x,y to next hist entry
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -242,7 +280,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// GetFullHistory
+        /// returns BrowseHistory object
         /// </summary>
         /// <returns></returns>
         public BrowseHistory GetFullHistory()
@@ -251,7 +290,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// SetFullHistory
+        /// sets a new BrowseHistory object and sets curidx to the end
         /// </summary>
         /// <param name="hist"></param>
         public void SetFullHistory(BrowseHistory hist)

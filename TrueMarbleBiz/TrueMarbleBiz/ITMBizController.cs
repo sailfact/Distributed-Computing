@@ -11,10 +11,10 @@ namespace TrueMarbleBiz
     public interface ITMBizController
     {
         [OperationContract]
-        int GetNumTilesAcross(int zoom);
+        int GetNumTilesAcross(int zoom, out int across);
 
         [OperationContract]
-        int GetNumTilesDown(int zoom);
+        int GetNumTilesDown(int zoom, out int down);
 
         [OperationContract]
         byte[] LoadTile(int zoom, int x, int y);

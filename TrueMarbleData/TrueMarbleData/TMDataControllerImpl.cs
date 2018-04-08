@@ -119,14 +119,13 @@ namespace TrueMarbleData
         /// Byte array containing raw JPG
         /// </returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public int LoadTile(int zoom, int x, int y, byte[] array)
+        public byte[] LoadTile(int zoom, int x, int y)
         {
             int size;
-
+            byte[] array;
             if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)      // get height and width
             {
                 Console.WriteLine("Error with DLL function 'GetTileSize'");
-                return 0;
             }
 
             size = width * height * 3;  // determine size
@@ -136,22 +135,22 @@ namespace TrueMarbleData
             if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
             {
                 Console.WriteLine("Error in DLL Function 'GetNumTiles'");
-                return 0;
+                return null;
             }
 
             // check if coordinates are valid
             if (!(x < across && y < down))
             {
-                return 0;
+                return null;
             }
 
             if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
             {
                 Console.WriteLine("Error in DLL Function 'GetTileImageAsRawJPG'");
-                return 0;
+                return null;
             }
 
-            return 1;   // success
+            return array;   // success
         }
     }
 }

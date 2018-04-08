@@ -102,22 +102,28 @@ namespace TrueMarbleGUI
                 m_zoom = (int)sldZoom.Value;
                 try
                 {
-                    if (m_xValue > m_biz.GetNumTilesAcross(m_zoom) - 1)
+                    if ((m_biz.GetNumTilesAcross(m_zoom, out int across) == 1) && (m_biz.GetNumTilesDown(m_zoom, out int down) == 1))
                     {
-                        m_xValue = m_biz.GetNumTilesAcross(m_zoom) - 1;
-                    }
+                        if (m_xValue > across - 1)
+                        {
+                            m_xValue = across - 1;
+                        }
 
-                    if (m_yValue > m_biz.GetNumTilesDown(m_zoom) - 1)
+                        if (m_yValue > across - 1)
+                        {
+                            m_yValue = across - 1;
+                        }
+                        LoadTile(true);     // reload the tile
+                    }
+                    else
                     {
-                        m_yValue = m_biz.GetNumTilesDown(m_zoom) - 1;
+
                     }
                 }
                 catch (CommunicationException ce)       // if server died
                 {
                     MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
                 }
-
-                LoadTile(true);     // reload the tile
             }
         }
 
@@ -132,13 +138,21 @@ namespace TrueMarbleGUI
         {
             try
             {
-                if (m_yValue == 0)      // if  y is at lower limit 
+                if (m_biz.GetNumTilesDown(m_zoom, out int down) == 1)
                 {
-                    m_yValue = m_biz.GetNumTilesDown(m_zoom) - 1;       // roll back to end
+                    if (m_yValue == 0)      // if  y is at lower limit 
+                    {
+                        m_yValue = down - 1;       // roll back to end
+                    }
+                    else
+                    {
+                        m_yValue--;      // else increment -1
+                    }
+                    LoadTile(true);     // reload the tile
                 }
                 else
                 {
-                    m_yValue--;      // else increment -1
+                    MessageBox.Show("Error Occurred while communicating with the server please try again later");
                 }
             }
             catch (CommunicationException ce)   // catch if server dies
@@ -146,7 +160,7 @@ namespace TrueMarbleGUI
                 MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
             }
 
-            LoadTile(true);     // reload the tile
+            
         }
 
         /// <summary>
@@ -160,21 +174,27 @@ namespace TrueMarbleGUI
         {
             try
             {
-                if (m_xValue == 0)      // if x is at lower limit 
+                if (m_biz.GetNumTilesAcross(m_zoom, out int across) == 1)
                 {
-                    m_xValue = m_biz.GetNumTilesAcross(m_zoom) - 1;       // roll back to start
+                    if (m_xValue == 0)      // if x is at lower limit 
+                    {
+                        m_xValue = across - 1;       // roll back to start
+                    }
+                    else
+                    {
+                        m_xValue -= 1;      // else increment - 1;
+                    }
+                    LoadTile(true);     // reload the tile
                 }
                 else
                 {
-                    m_xValue -= 1;      // else increment - 1;
+                    MessageBox.Show("Error Occurred while communicating with the server please try again later");
                 }
             }
             catch (CommunicationException ce)      // catch if server dies
             {
-                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
+                MessageBox.Show("Error Connecting to server, please try again later\n\nError\n" + ce.Message);
             }
-
-            LoadTile(true);     // reload the tile
         }
 
         /// <summary>
@@ -187,22 +207,28 @@ namespace TrueMarbleGUI
         private void BtnNorth_Click(object sender, RoutedEventArgs e)
         {
             try
-            { 
-                if (m_yValue == m_biz.GetNumTilesDown(m_zoom)-1)      // if y is at upper limit 
+            {
+                if (m_biz.GetNumTilesDown(m_zoom, out int down) == 1)
                 {
-                    m_yValue = 0;       // roll back to start
+                    if (m_yValue == down - 1)      // if y is at upper limit 
+                    {
+                        m_yValue = 0;       // roll back to start
+                    }
+                    else
+                    {
+                        m_yValue += 1;      // else increment 2
+                    }
+                    LoadTile(true);     // reload the tile
                 }
                 else
                 {
-                    m_yValue += 1;      // else increment 2
+                    MessageBox.Show("Error Occurred while communicating with the server please try again later");
                 }
             }   
             catch (CommunicationException ce)      // catch if server dies
             {
-                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
+                MessageBox.Show("Error Connecting to server, please try again later\n\nError\n" + ce.Message);
             }
-
-            LoadTile(true);     // reload the tile
         }
 
         /// <summary>
@@ -216,13 +242,22 @@ namespace TrueMarbleGUI
         {
             try
             {
-                if (m_xValue == m_biz.GetNumTilesAcross(m_zoom)-1)      // if x is at upper limit
+                if (m_biz.GetNumTilesAcross(m_zoom, out int across) == 1)
                 {
-                    m_xValue = 0;       // roll back to start
+                    if (m_xValue == across - 1)      // if x is at upper limit
+                    {
+                        m_xValue = 0;       // roll back to start
+                    }
+                    else
+                    {
+                        m_xValue += 1;         // else increment by 2
+                    }
+
+                    LoadTile(true);     // reload the tile
                 }
                 else
                 {
-                    m_xValue += 1;         // else increment by 2
+                    MessageBox.Show("Error Occurred while communicating with the server please try again later");
                 }
             }
             catch (CommunicationException ce)       // catch if server dies
@@ -230,7 +265,7 @@ namespace TrueMarbleGUI
                 MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
             }
 
-            LoadTile(true);     // reload the tile
+            
         }
         
         /// <summary>
@@ -247,26 +282,29 @@ namespace TrueMarbleGUI
                 // used for getting JPG
                 JpegBitmapDecoder decoder;
                 MemoryStream memoryStream;
-
+                byte[] array;
                 try
                 {
-                    memoryStream = new MemoryStream(m_biz.LoadTile(m_zoom, m_xValue, m_yValue)); // construct memoryStream with byte array for server call
-                    decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None); // decode jpg
-                    imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
-                    if (addToHist)
-                        m_biz.AddHistEntry(m_xValue, m_yValue, m_zoom);     // add entry to history
+                    if ((array = m_biz.LoadTile(m_zoom, m_xValue, m_yValue)) != null)
+                    {
+                        memoryStream = new MemoryStream(array); // construct memoryStream with byte array for server call
+                        decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None); // decode jpg
+                        imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
+                        if (addToHist)
+                            m_biz.AddHistEntry(m_xValue, m_yValue, m_zoom);     // add entry to history
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error Occurred While fecthing tile tile from the server\n");
+                    }
                 }
-                catch (FileFormatException fe)  // catch decoder if it fails
+                catch (FileFormatException)  // catch decoder if it fails
                 {
-                    MessageBox.Show(fe.Message);
-                }
-                catch (FaultException fe)   // if LoadTiles fails show the error message and continue
-                {
-                    MessageBox.Show(fe.Message);
+                    MessageBox.Show("Error occurrd while decoding tile");
                 }
                 catch (CommunicationException ce)   // catch exception if server died for some reason
                 {
-                    MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
+                    MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n"+ ce.Message);
                 }
             }
         }
@@ -300,7 +338,7 @@ namespace TrueMarbleGUI
         }
 
         /// <summary>
-        /// Call back funstion prints whether verification of 
+        /// Call back function prints whether verification of 
         /// tiles where valid
         /// </summary>
         /// <param name="result"></param>
@@ -324,23 +362,41 @@ namespace TrueMarbleGUI
         /// <param name="e"></param>
         private void MenuItem_Click_Save(object sender, RoutedEventArgs e)
         {
-            BrowseHistory browseHistory = m_biz.GetFullHistory();
+            BrowseHistory browseHistory;
             FileStream fileStream = null;
             DataContractSerializer serializer;
 
             try
             {
+                browseHistory = m_biz.GetFullHistory();
                 fileStream = new FileStream("C:/Users/Public/History.xml", FileMode.Create, FileAccess.Write);
                 serializer = new DataContractSerializer(typeof(BrowseHistory));
                 serializer.WriteObject(fileStream, browseHistory);
             }
-            catch (UnauthorizedAccessException ua)
+            catch (FileNotFoundException)
             {
-                MessageBox.Show("Error While Loading History Occurred\n\nError:\n" + ua.Message);
+                MessageBox.Show("Error While Saving History Occurred\n\nError: File Not Found\n");
             }
-            catch (IOException io)
+            catch (UnauthorizedAccessException)
             {
-                MessageBox.Show("Error While Loading History Occurred\n\nError:\n" + io.Message);
+                MessageBox.Show("Error While Saving History Occurred\n\nError: Unauthorized Access\n");
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("Error While History History Occurred\n\n");
+            }
+            catch (SerializationException)
+            {
+                MessageBox.Show("Error While Saving History Occurred\n\nError: Serialization\n");
+            }
+            catch (InvalidDataContractException)
+            {
+                MessageBox.Show("Error While Saving History Occurred\n\nError: Invalid Data Contract\n");
+            }
+            catch (CommunicationException)
+            {
+                MessageBox.Show("An unrecoverable error occurred between you and the server");
+                this.Close();
             }
             finally
             {
@@ -366,6 +422,10 @@ namespace TrueMarbleGUI
 
                 browseHistory = (BrowseHistory)serializer.ReadObject(fileStream);
                 m_biz.SetFullHistory(browseHistory);
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("Error While Loading History Occurred\n\nError: File Not Found\n");
             }
             catch (UnauthorizedAccessException ua)
             {
@@ -399,6 +459,7 @@ namespace TrueMarbleGUI
             catch (InvalidOperationException)
             {
                 MessageBox.Show("An Error Occurred while loading the history window\n");
+                this.Close();
             }
             catch (CommunicationObjectFaultedException )
             {

@@ -74,18 +74,19 @@ namespace TrueMarbleBiz
         /// </summary>
         /// <param name="zoom"></param>
         /// <returns>
-        /// 1 = success
-        /// 0 = failure
+        /// returns num tiles across or -1 if failure
         /// </returns>
-        public int GetNumTilesAcross(int zoom, out int across)
+        public int GetNumTilesAcross(int zoom)
         {
-            if (m_tmData.GetNumTilesAcross(zoom, out across) != 1)
+            try
             {
-                Console.WriteLine("Error: Getting Num tiles across from data tier");
-                return 0;
+                return  m_tmData.GetNumTilesAcross(zoom);
             }
-
-            return 1;
+           catch (CommunicationException)
+            {
+                Console.WriteLine("Error: Communicating with data server");
+                return -1;
+            }
         }
 
         /// <summary>
@@ -93,17 +94,19 @@ namespace TrueMarbleBiz
         /// </summary>
         /// <param name="zoom"></param>
         /// <returns>
-        /// 1 == success
-        /// 0 == failure
+        /// returns num tiles down or -1 if failure
         /// </returns>
-        public int GetNumTilesDown(int zoom, out int down)
+        public int GetNumTilesDown(int zoom)
         {
-            if (m_tmData.GetNumTilesDown(zoom, out down) != 1)
+            try
             {
-                Console.WriteLine("Error: Getting Num tiles down from data tier");
-                return 0;
+                return m_tmData.GetNumTilesDown(zoom);
             }
-            return 1;
+            catch (CommunicationException)
+            {
+                Console.WriteLine("Error: Communicating with data server\n");
+                return -1;
+            }
         }
         
         /// <summary>
@@ -114,8 +117,8 @@ namespace TrueMarbleBiz
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns>
-        /// 1 = success
-        /// 0 = failure
+        /// byte array of raw tile jpg
+        /// or null if error
         /// </returns>
         public byte[] LoadTile(int zoom, int x, int y)
         {
@@ -123,7 +126,7 @@ namespace TrueMarbleBiz
             {
                 return m_tmData.LoadTile(zoom, x, y);
             }
-            catch (CommunicationException ce)
+            catch (CommunicationException)
             {
                 Console.WriteLine("Error While loading tile from server");
                 return null;
@@ -140,25 +143,12 @@ namespace TrueMarbleBiz
             bool verified = true;
             MemoryStream memoryStream;
             JpegBitmapDecoder decoder;
-            int across = 0;
-            int down = 0;
+
             for (int zoom = 0; (zoom <= 6 && verified); zoom++)
             {
-                if (m_tmData.GetNumTilesAcross(zoom, out across) != 1)
+                for (int x = 0; (x < m_tmData.GetNumTilesAcross(zoom) - 1 && verified); x++)
                 {
-                    Console.WriteLine("Error Gettiong tiles across from data tier");
-                    return false;
-                }
-
-                if (m_tmData.GetNumTilesDown(zoom, out down) != 1)
-                {
-                    Console.WriteLine("Error Getting tiles down from data tier");
-                    return false;
-                }
-
-                for (int x = 0; (x < across - 1 && verified); x++)
-                {
-                    for (int y = 0; (y < down - 1 && verified); y++)
+                    for (int y = 0; (y < m_tmData.GetNumTilesDown(zoom) - 1 && verified); y++)
                     {
                         try
                         {
@@ -218,9 +208,9 @@ namespace TrueMarbleBiz
                 asyncObj.AsyncWaitHandle.Close();
                 ob.OnVerificationComplete(iResult);     // send result to client
             }
-            catch (CommunicationObjectAbortedException ae)
+            catch (CommunicationException e)
             {
-                Console.WriteLine(ae.Message);
+                Console.WriteLine(e.Message);
             }
         }
 

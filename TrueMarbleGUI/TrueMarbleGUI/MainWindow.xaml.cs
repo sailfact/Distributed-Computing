@@ -102,22 +102,23 @@ namespace TrueMarbleGUI
                 m_zoom = (int)sldZoom.Value;
                 try
                 {
-                    if ((m_biz.GetNumTilesAcross(m_zoom, out int across) == 1) && (m_biz.GetNumTilesDown(m_zoom, out int down) == 1))
+                    int across, down;
+                    if (((across = m_biz.GetNumTilesAcross(m_zoom)) != -1) && ((down = m_biz.GetNumTilesDown(m_zoom)) != -1))
                     {
                         if (m_xValue > across - 1)
                         {
                             m_xValue = across - 1;
                         }
 
-                        if (m_yValue > across - 1)
+                        if (m_yValue > down - 1)
                         {
-                            m_yValue = across - 1;
+                            m_yValue = down - 1;
                         }
                         LoadTile(true);     // reload the tile
                     }
                     else
                     {
-
+                        MessageBox.Show("Error occurred while retrieving info from server");
                     }
                 }
                 catch (CommunicationException ce)       // if server died
@@ -138,7 +139,8 @@ namespace TrueMarbleGUI
         {
             try
             {
-                if (m_biz.GetNumTilesDown(m_zoom, out int down) == 1)
+                int down;
+                if ((down = m_biz.GetNumTilesDown(m_zoom)) != -1)
                 {
                     if (m_yValue == 0)      // if  y is at lower limit 
                     {
@@ -174,7 +176,8 @@ namespace TrueMarbleGUI
         {
             try
             {
-                if (m_biz.GetNumTilesAcross(m_zoom, out int across) == 1)
+                int across;
+                if ((across = m_biz.GetNumTilesAcross(m_zoom)) != -1)
                 {
                     if (m_xValue == 0)      // if x is at lower limit 
                     {
@@ -208,7 +211,8 @@ namespace TrueMarbleGUI
         {
             try
             {
-                if (m_biz.GetNumTilesDown(m_zoom, out int down) == 1)
+                int down;
+                if ((down = m_biz.GetNumTilesDown(m_zoom)) != -1)
                 {
                     if (m_yValue == down - 1)      // if y is at upper limit 
                     {
@@ -242,7 +246,8 @@ namespace TrueMarbleGUI
         {
             try
             {
-                if (m_biz.GetNumTilesAcross(m_zoom, out int across) == 1)
+                int across;
+                if ((across = m_biz.GetNumTilesAcross(m_zoom)) != -1)
                 {
                     if (m_xValue == across - 1)      // if x is at upper limit
                     {
@@ -282,21 +287,17 @@ namespace TrueMarbleGUI
                 // used for getting JPG
                 JpegBitmapDecoder decoder;
                 MemoryStream memoryStream;
-                byte[] array;
                 try
                 {
-                    if ((array = m_biz.LoadTile(m_zoom, m_xValue, m_yValue)) != null)
-                    {
-                        memoryStream = new MemoryStream(array); // construct memoryStream with byte array for server call
-                        decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None); // decode jpg
-                        imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
-                        if (addToHist)
-                            m_biz.AddHistEntry(m_xValue, m_yValue, m_zoom);     // add entry to history
-                    }
-                    else
-                    {
-                        MessageBox.Show("Error Occurred While fecthing tile tile from the server\n");
-                    }
+                    memoryStream = new MemoryStream(m_biz.LoadTile(m_zoom, m_xValue, m_yValue)); // construct memoryStream with byte array for server call
+                    decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None); // decode jpg
+                    imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
+                    if (addToHist)
+                        m_biz.AddHistEntry(m_xValue, m_yValue, m_zoom);     // add entry to history
+                }
+                catch (ArgumentNullException)
+                {
+                    MessageBox.Show("Error Retrieving Tile From Server");
                 }
                 catch (FileFormatException)  // catch decoder if it fails
                 {
@@ -318,9 +319,16 @@ namespace TrueMarbleGUI
         /// <param name="e"></param>
         private void BtnBack_Click(object sender, RoutedEventArgs e)
         {
-            m_biz.HistBack(out m_xValue, out m_yValue, out m_zoom);
+            try
+            {
+                m_biz.HistBack(out m_xValue, out m_yValue, out m_zoom);
 
-            LoadTile(false);
+                LoadTile(false);
+            }
+            catch (CommunicationException e1)
+            {
+                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + e1.Message);
+            }
         }
 
         /// <summary>
@@ -332,9 +340,16 @@ namespace TrueMarbleGUI
         /// <param name="e"></param>
         private void BtnForward_Click(object sender, RoutedEventArgs e)
         {
-            m_biz.HistForward(out m_xValue, out m_yValue, out m_zoom);
+            try
+            {
+                m_biz.HistForward(out m_xValue, out m_yValue, out m_zoom);
 
-            LoadTile(false);
+                LoadTile(false);
+            }
+            catch (CommunicationException e1)
+            {
+                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + e1.Message);
+            }
         }
 
         /// <summary>

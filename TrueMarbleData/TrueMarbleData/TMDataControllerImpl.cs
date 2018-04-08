@@ -38,18 +38,17 @@ namespace TrueMarbleData
         /// </summary>
         /// <param name="zoom"></param>
         /// <returns>
-        /// 1 for success
-        /// 0 for failure
+        /// returns across or -1 if error
         /// </returns>
-        public int GetNumTilesAcross(int zoom, out int across)
+        public int GetNumTilesAcross(int zoom)
         {
-            if (TMDLLWrapper.GetNumTiles(zoom, out across, out int down) != 1)
+            if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
             {
                 Console.WriteLine("Error in DLL Function 'GetNumTiles'");
-                return 0;
+                return -1;
             }
 
-            return 1;
+            return across;
         }
 
         /// <summary>
@@ -57,16 +56,18 @@ namespace TrueMarbleData
         /// returns number of tiles down depending on the level of zoom
         /// </summary>
         /// <param name="zoom"></param>
-        /// <returns></returns>
-        public int GetNumTilesDown(int zoom, out int down)
+        /// <returns>
+        /// returns down or -1 if error
+        /// </returns>
+        public int GetNumTilesDown(int zoom)
         {
-            if (TMDLLWrapper.GetNumTiles(zoom, out int across, out down) != 1)
+            if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
             {
                 Console.WriteLine("Error in DLL Function 'GetNumTiles'");
-                return 0;
+                return -1;
             }
 
-            return 1;
+            return down;
         }
 
         /// <summary>
@@ -74,17 +75,18 @@ namespace TrueMarbleData
         /// returns tile height
         /// always 256 
         /// </summary>
-        /// <param name="zoom"></param>
-        /// <returns></returns>
-        public int GetTileHeight(out int width)
+        /// <returns>
+        /// returns height or -1 if error
+        /// </returns>
+        public int GetTileHeight()
         {
-            if (TMDLLWrapper.GetTileSize(out width, out int height) != 1)
+            if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
             {
                 Console.WriteLine("Error in DLL Function 'GetTileSize'");
-                return 0;
+                return -1;  // error
             }
 
-            return 1;
+            return height;
         }
 
         /// <summary>
@@ -92,16 +94,18 @@ namespace TrueMarbleData
         /// returns tile width 
         /// always 256
         /// </summary>
-        /// <returns></returns>
-        public int GetTileWidth(out int width)
+        /// <returns>
+        /// returns width or -1 or error
+        /// </return>
+        public int GetTileWidth()
         {
-            if (TMDLLWrapper.GetTileSize(out width, out int height) != 1)
+            if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
             {
                 Console.WriteLine("Error in DLL Function 'GetTileSize'");
-                return 0;
+                return -1;
             }
 
-            return 1;
+            return width;
         }
 
 
@@ -114,9 +118,7 @@ namespace TrueMarbleData
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns>
-        /// 1 for success 
-        /// 0 for failure
-        /// Byte array containing raw JPG
+        /// returns byte array of raw JPG or null if error
         /// </returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public byte[] LoadTile(int zoom, int x, int y)

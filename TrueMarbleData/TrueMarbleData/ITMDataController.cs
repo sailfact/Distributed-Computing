@@ -12,16 +12,16 @@ namespace TrueMarbleData
     public interface ITMDataController
     {
         [OperationContract]
-        int GetTileWidth(out int width);
+        int GetTileWidth();
 
         [OperationContract]
-        int GetTileHeight(out int height);
+        int GetTileHeight();
 
         [OperationContract]
-        int GetNumTilesAcross(int zoom, out int across);
+        int GetNumTilesAcross(int zoom);
 
         [OperationContract]
-        int GetNumTilesDown(int zoom, out int down);
+        int GetNumTilesDown(int zoom);
 
         [OperationContract]
         byte[] LoadTile(int zoom, int x, int y);

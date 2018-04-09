@@ -121,9 +121,10 @@ namespace TrueMarbleGUI
                         MessageBox.Show("Error occurred while retrieving info from server");
                     }
                 }
-                catch (CommunicationException ce)       // if server died
+                catch (CommunicationException)       // if server died
                 {
-                    MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
+                    MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n");
+                    this.Close();
                 }
             }
         }
@@ -160,6 +161,7 @@ namespace TrueMarbleGUI
             catch (CommunicationException ce)   // catch if server dies
             {
                 MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
+                this.Close();
             }
 
             
@@ -197,6 +199,7 @@ namespace TrueMarbleGUI
             catch (CommunicationException ce)      // catch if server dies
             {
                 MessageBox.Show("Error Connecting to server, please try again later\n\nError\n" + ce.Message);
+                this.Close();
             }
         }
 
@@ -232,6 +235,7 @@ namespace TrueMarbleGUI
             catch (CommunicationException ce)      // catch if server dies
             {
                 MessageBox.Show("Error Connecting to server, please try again later\n\nError\n" + ce.Message);
+                this.Close();
             }
         }
 
@@ -268,6 +272,7 @@ namespace TrueMarbleGUI
             catch (CommunicationException ce)       // catch if server dies
             {
                 MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
+                this.Close();
             }
 
             
@@ -306,6 +311,7 @@ namespace TrueMarbleGUI
                 catch (CommunicationException ce)   // catch exception if server died for some reason
                 {
                     MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n"+ ce.Message);
+                    this.Close();
                 }
             }
         }
@@ -325,9 +331,9 @@ namespace TrueMarbleGUI
 
                 LoadTile(false);
             }
-            catch (CommunicationException e1)
+            catch (CommunicationException)
             {
-                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + e1.Message);
+                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n");
             }
         }
 
@@ -346,9 +352,9 @@ namespace TrueMarbleGUI
 
                 LoadTile(false);
             }
-            catch (CommunicationException e1)
+            catch (CommunicationException)
             {
-                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + e1.Message);
+                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n");
             }
         }
 
@@ -410,8 +416,7 @@ namespace TrueMarbleGUI
             }
             catch (CommunicationException)
             {
-                MessageBox.Show("An unrecoverable error occurred between you and the server");
-                this.Close();
+                MessageBox.Show("Error occurred between you and the server please try again later");
             }
             finally
             {

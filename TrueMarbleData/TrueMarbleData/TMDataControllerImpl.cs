@@ -25,14 +25,6 @@ namespace TrueMarbleData
         }
 
         /// <summary>
-        /// Deconstructor
-        /// </summary>
-        ~TMDataControllerImpl()
-        {
-            Console.WriteLine("Client Disconnected");
-        }
-
-        /// <summary>
         /// GetNumTilesAcross
         /// returns number of tiles across depending on the level of zoom
         /// </summary>
@@ -42,13 +34,21 @@ namespace TrueMarbleData
         /// </returns>
         public int GetNumTilesAcross(int zoom)
         {
-            if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
+            try
             {
-                Console.WriteLine("Error in DLL Function 'GetNumTiles'");
+                if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
+                {
+                    Console.WriteLine("Error in DLL Function 'GetNumTiles'");
+                    return -1;  // error
+                }
+                return across;
+            }
+            catch (DllNotFoundException e)
+            {
+                Console.WriteLine("Error in Function GetNumTilesAcross:"+e.Message);
                 return -1;
             }
-
-            return across;
+            
         }
 
         /// <summary>
@@ -61,14 +61,22 @@ namespace TrueMarbleData
         /// </returns>
         public int GetNumTilesDown(int zoom)
         {
-            if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
+            try
             {
-                Console.WriteLine("Error in DLL Function 'GetNumTiles'");
+                if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
+                {
+                    Console.WriteLine("Error in DLL Function 'GetNumTiles'");
+                    return -1;  // error
+                }
+                return down;
+            }
+            catch (DllNotFoundException e)
+            {
+                Console.WriteLine("Error in Function GetNumTilesDown:" + e.Message);
                 return -1;
             }
-
-            return down;
         }
+
 
         /// <summary>
         /// GetTileHeight
@@ -80,13 +88,20 @@ namespace TrueMarbleData
         /// </returns>
         public int GetTileHeight()
         {
-            if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
+            try
             {
-                Console.WriteLine("Error in DLL Function 'GetTileSize'");
-                return -1;  // error
+                if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
+                {
+                    Console.WriteLine("Error in DLL Function 'GetTileSize'");
+                    return -1;  // error
+                }
+                return height;
             }
-
-            return height;
+            catch (DllNotFoundException e)
+            {
+                Console.WriteLine("Error in Function GetTileHeight:" + e.Message);
+                return -1;
+            }
         }
 
         /// <summary>
@@ -99,15 +114,22 @@ namespace TrueMarbleData
         /// </return>
         public int GetTileWidth()
         {
-            if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
+            try
             {
-                Console.WriteLine("Error in DLL Function 'GetTileSize'");
+                if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
+                {
+                    Console.WriteLine("Error in DLL Function 'GetTileSize'");
+                    return -1;  // error
+                }
+
+                return width;
+            }
+            catch (DllNotFoundException e)
+            {
+                Console.WriteLine("Error in Function GetTileHeight:" + e.Message);
                 return -1;
             }
-
-            return width;
         }
-
 
         /// <summary>
         /// LoadTile
@@ -124,35 +146,38 @@ namespace TrueMarbleData
         public byte[] LoadTile(int zoom, int x, int y)
         {
             int size;
-            byte[] array;
-            if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)      // get height and width
+            byte[] array = null;
+            try
             {
-                Console.WriteLine("Error with DLL function 'GetTileSize'");
+                if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)      // get height and width
+                {
+                    Console.WriteLine("Error with DLL function 'GetTileSize'");
+                    return null;
+                }
+
+                size = width * height * 3;  // determine size
+                array = new byte[size];     // allocate buffer
+
+                if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
+                {
+                    Console.WriteLine("Error in DLL Function 'GetNumTiles'");
+                }
+
+                if ((x < across && y < down))// check if coordinates are valid
+                {
+                    if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
+                    {
+                        Console.WriteLine("Error in DLL Function 'GetTileImageAsRawJPG'");
+                        return null;
+                    }
+                }
+            }
+            catch (DllNotFoundException e)
+            {
+                Console.WriteLine("Error in Function 'LoadTile'"+e.Message);
             }
 
-            size = width * height * 3;  // determine size
-            array = new byte[size];     // allocate buffer
-
-            
-            if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
-            {
-                Console.WriteLine("Error in DLL Function 'GetNumTiles'");
-                return null;
-            }
-
-            // check if coordinates are valid
-            if (!(x < across && y < down))
-            {
-                return null;
-            }
-
-            if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
-            {
-                Console.WriteLine("Error in DLL Function 'GetTileImageAsRawJPG'");
-                return null;
-            }
-
-            return array;   // success
+            return array;   // will be null if failure
         }
     }
 }

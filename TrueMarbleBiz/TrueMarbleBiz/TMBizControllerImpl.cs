@@ -50,27 +50,29 @@ namespace TrueMarbleBiz
                 m_tmData = channelFactory.CreateChannel();  // create true marbledata on remote server
                 m_hist = new BrowseHistory();
             }
-            catch (ArgumentException e1)
+            catch (ArgumentNullException e1)
             {
-                Console.WriteLine(e1.Message);
+                Console.WriteLine("Error: Binding URL to ChannelFactory\n\n"+e1.Message);
                 Environment.Exit(1);
                 
             }
             catch (CommunicationException e2)
             {
-                Console.WriteLine(e2.Message);
+                Console.WriteLine("Error: Communicating with Data Server \n\n"+e2.Message);
                 Environment.Exit(1);
             }
             catch (InvalidOperationException e3)
             {
-                Console.WriteLine(e3.Message);
+                Console.WriteLine("Error: Modifying TcpBinding Message Quota\n\n"+e3.Message);
                 Environment.Exit(1);
             }
 
         }
 
         /// <summary>
-        /// 
+        /// GetNumTilesAcross
+        /// gets the across value for the corresponding zoom level
+        /// from the data tier and relays it to the gui
         /// </summary>
         /// <param name="zoom"></param>
         /// <returns>
@@ -82,15 +84,16 @@ namespace TrueMarbleBiz
             {
                 return  m_tmData.GetNumTilesAcross(zoom);
             }
-           catch (CommunicationException)
+            catch (CommunicationException e)
             {
-                Console.WriteLine("Error: Communicating with data server");
+                Console.WriteLine("Error: Retreiving NumTilesAcross from Data Server\n\n"+e.Message);
                 return -1;
             }
         }
 
         /// <summary>
-        /// 
+        /// gets the down value for the corresponding zoom level
+        /// from the data tier and relays it to the gui
         /// </summary>
         /// <param name="zoom"></param>
         /// <returns>
@@ -102,9 +105,9 @@ namespace TrueMarbleBiz
             {
                 return m_tmData.GetNumTilesDown(zoom);
             }
-            catch (CommunicationException)
+            catch (CommunicationException e)
             {
-                Console.WriteLine("Error: Communicating with data server\n");
+                Console.WriteLine("Error: Retreiving NumTilesAcross from Data Server\n\n"+e.Message);
                 return -1;
             }
         }
@@ -126,9 +129,9 @@ namespace TrueMarbleBiz
             {
                 return m_tmData.LoadTile(zoom, x, y);
             }
-            catch (CommunicationException)
+            catch (CommunicationException e)
             {
-                Console.WriteLine("Error While loading tile from server");
+                Console.WriteLine("Error: Retreiving NumTilesDown from Data Server\n\n"+e.Message);
                 return null;
             }
         }
@@ -137,40 +140,65 @@ namespace TrueMarbleBiz
         /// VerifyTiles
         /// loops through every tile coordinate and check whether they can be decoded
         /// </summary>
-        /// <returns name="verified"></returns>
+        /// <returns>
+        /// true if tiles are all valid, false if they 
+        /// aren't or there was a problem checking
+        /// </returns>
         public bool VerifyTiles()
         {
             bool verified = true;
             MemoryStream memoryStream;
             JpegBitmapDecoder decoder;
-
-            for (int zoom = 0; (zoom <= 6 && verified); zoom++)
+            int across, down;
+            try
             {
-                for (int x = 0; (x < m_tmData.GetNumTilesAcross(zoom) - 1 && verified); x++)
+                for (int zoom = 0; (zoom <= 6 && verified); zoom++)
                 {
-                    for (int y = 0; (y < m_tmData.GetNumTilesDown(zoom) - 1 && verified); y++)
+                    if ((across = m_tmData.GetNumTilesAcross(zoom)) == -1)
                     {
-                        try
+                        Console.WriteLine("Error: Retrieving NumTilesAcross from Data Server, in Function 'VerifyTiles'");
+                        return false;
+                    }
+                    if ((down = m_tmData.GetNumTilesDown(zoom)) == -1)
+                    {
+                        Console.WriteLine("Error: Retrieving NumTilesDown from Data Server, in Function 'VerifyTiles'");
+                        return false;
+                    }
+                    for (int x = 0; (x < across - 1 && verified); x++)
+                    {
+                        for (int y = 0; (y < down - 1 && verified); y++)
                         {
-                            
-                            memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
-                            decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
-                        }
-                        catch
-                        {
-                            // if it fails it probably is corrupt
-                            Console.WriteLine("Tile zoom={0}, x={1}, y={2} Corrupted",zoom, x, y);
-                            verified = false;
+                            try
+                            {
+                                memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
+                                decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
+                            }
+                            catch (FileFormatException)  // if it fails it probably is corrupt
+                            {
+                                Console.WriteLine("\n\tTile zoom={0}, x={1}, y={2} Corrupted\n\n", zoom, x, y); // print which tile is corrupt
+                                verified = false;   // keep iterating throught to see which other tiles are corrupt
+                            }
+                            catch (ArgumentNullException)  // Loadtiles failed
+                            {
+                                Console.WriteLine("Error Loading Tiles from Data Server, in Function'Verify Tiles'\n");
+                                return false;   // notify gui that tiles can't be verified
+                            }
                         }
                     }
                 }
+            }
+            catch (CommunicationException e2) // Data server is offline
+            {
+                Console.WriteLine("Error: Communicating With Data Server, in Function 'VerifyTiles'\n\n" + e2.Message);
+                return false;// notify gui that tiles can't be verified
             }
 
             return verified;
         }
 
         /// <summary>
-        /// 
+        /// VerifyTilesAsync
+        /// assigns a delegate to the function Verify tiles to be run Asyncronously
         /// </summary>
         public void VerifyTilesAsync()
         {
@@ -181,11 +209,13 @@ namespace TrueMarbleBiz
             // pass remote client callback reference
             addDel.BeginInvoke(callbackDel,  OperationContext.Current.GetCallbackChannel<ITMBizControllerCallback>());             
 
-            Console.WriteLine("Waiting for Verification");
+            Console.WriteLine("Waiting for Verification...");
         }
 
         /// <summary>
-        /// 
+        /// VerifyTiles_OnComplete
+        /// Callback funtion for Delgate
+        /// gets the result from the call and sends it to the Client
         /// </summary>
         /// <param name="res"></param>
         public void VerifyTiles_OnComplete(IAsyncResult res)
@@ -210,7 +240,7 @@ namespace TrueMarbleBiz
             }
             catch (CommunicationException e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("Error: Sending Tile Verification to Client\n\n"+e.Message);
             }
         }
 

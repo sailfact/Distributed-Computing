@@ -43,6 +43,7 @@ namespace TrueMarbleData
             catch (TimeoutException e)
             {
                 Console.WriteLine(e.Message);
+
             }
             catch (CommunicationObjectFaultedException e)
             {
@@ -51,6 +52,7 @@ namespace TrueMarbleData
             finally
             {
                 host.Close();
+                Environment.Exit(0);
             }
         }
     }

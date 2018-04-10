@@ -82,7 +82,12 @@ namespace TrueMarbleBiz
         {
             try
             {
-                return  m_tmData.GetNumTilesAcross(zoom);
+                int across = m_tmData.GetNumTilesAcross(zoom, out string errMsg);
+                if (across == -1)
+                {
+                    Console.WriteLine(errMsg);
+                }
+                return across;
             }
             catch (CommunicationException e)
             {
@@ -103,7 +108,12 @@ namespace TrueMarbleBiz
         {
             try
             {
-                return m_tmData.GetNumTilesDown(zoom);
+                int down = m_tmData.GetNumTilesDown(zoom, out string errMsg);
+                if (down == -1)
+                {
+                    Console.WriteLine(errMsg);
+                }
+                return down;
             }
             catch (CommunicationException e)
             {
@@ -127,7 +137,12 @@ namespace TrueMarbleBiz
         {
             try
             {
-                return m_tmData.LoadTile(zoom, x, y);
+                byte[] array = m_tmData.LoadTile(zoom, x, y, out string errMsg);
+                if (array == null)
+                {
+                    Console.WriteLine(errMsg);
+                }
+                return array;
             }
             catch (CommunicationException e)
             {
@@ -154,14 +169,14 @@ namespace TrueMarbleBiz
             {
                 for (int zoom = 0; (zoom <= 6 && verified); zoom++)
                 {
-                    if ((across = m_tmData.GetNumTilesAcross(zoom)) == -1)
+                    if ((across = m_tmData.GetNumTilesAcross(zoom, out string errMsg1)) == -1)
                     {
-                        Console.WriteLine("Error: Retrieving NumTilesAcross from Data Server, in Function 'VerifyTiles'");
+                        Console.WriteLine(errMsg1);
                         return false;
                     }
-                    if ((down = m_tmData.GetNumTilesDown(zoom)) == -1)
+                    if ((down = m_tmData.GetNumTilesDown(zoom, out string errMsg2)) == -1)
                     {
-                        Console.WriteLine("Error: Retrieving NumTilesDown from Data Server, in Function 'VerifyTiles'");
+                        Console.WriteLine(errMsg2);
                         return false;
                     }
                     for (int x = 0; (x < across - 1 && verified); x++)
@@ -170,7 +185,7 @@ namespace TrueMarbleBiz
                         {
                             try
                             {
-                                memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
+                                memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y, out string errMsg3));
                                 decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
                             }
                             catch (FileFormatException)  // if it fails it probably is corrupt
@@ -287,7 +302,7 @@ namespace TrueMarbleBiz
         /// <summary>
         /// HistForward
         /// sets zoom,x,y to next hist entry
-        /// </summary>
+        /// </summary
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="zoom"></param>

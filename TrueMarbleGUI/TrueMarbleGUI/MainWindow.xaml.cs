@@ -334,6 +334,7 @@ namespace TrueMarbleGUI
             catch (CommunicationException)
             {
                 MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n");
+                this.Close();
             }
         }
 
@@ -355,6 +356,7 @@ namespace TrueMarbleGUI
             catch (CommunicationException)
             {
                 MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n");
+                this.Close();
             }
         }
 
@@ -417,6 +419,8 @@ namespace TrueMarbleGUI
             catch (CommunicationException)
             {
                 MessageBox.Show("Error occurred between you and the server please try again later");
+                fileStream.Close();
+                this.Close();
             }
             finally
             {
@@ -445,17 +449,23 @@ namespace TrueMarbleGUI
             }
             catch (FileNotFoundException)
             {
-                MessageBox.Show("Error While Loading History Occurred\n\nError: File Not Found\n");
+                MessageBox.Show("Error While Loading History : File Not Found\n");
             }
-            catch (UnauthorizedAccessException ua)
+            catch (UnauthorizedAccessException)
             {
-                MessageBox.Show("Error While Loading History Occurred\n\nError:\n"+ua.Message);
+                MessageBox.Show("Error While Loading History : Unauthorized Access");
                 m_biz.SetFullHistory(new BrowseHistory());  // set a new history object
             }
-            catch (IOException io)
+            catch (IOException)
             {
-                MessageBox.Show("Error While Loading History Occurred\n\nError:\n"+io.Message);
+                MessageBox.Show("Error While Loading History : IO Error");
                 m_biz.SetFullHistory(new BrowseHistory());  // set a new history object
+            }
+            catch (CommunicationException)
+            {
+                MessageBox.Show("Error occurred between you and the server please try again later");
+                fileStream.Close();
+                this.Close();
             }
             finally
             {
@@ -479,21 +489,10 @@ namespace TrueMarbleGUI
             catch (InvalidOperationException)
             {
                 MessageBox.Show("An Error Occurred while loading the history window\n");
-                this.Close();
-            }
-            catch (CommunicationObjectFaultedException )
-            {
-                MessageBox.Show("An Error Occurred while loading the history window\nThe Server has Faulted");
-                this.Close();
-            }
-            catch (CommunicationObjectAbortedException)
-            {
-                MessageBox.Show("An Error Occurred while loading the history window\nThe Server has Aborted");
-                this.Close();
             }
             catch (CommunicationException)
             {
-                MessageBox.Show("An Error Occurred while loading the history window\nThe Server is Not Communicating");
+                MessageBox.Show("An Error Occurred while loading the history window\nThe Server is Not Communicating, Please Try Again Later");
                 this.Close();
             }
         }

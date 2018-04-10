@@ -32,20 +32,23 @@ namespace TrueMarbleData
         /// <returns>
         /// returns across or -1 if error
         /// </returns>
-        public int GetNumTilesAcross(int zoom)
+        public int GetNumTilesAcross(int zoom, out string errorMsg)
         {
+            errorMsg = null;
             try
             {
                 if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
                 {
-                    Console.WriteLine("Error in DLL Function 'GetNumTiles'");
+                    errorMsg = "Error in DLL Function 'GetNumTiles'";
+                    Console.WriteLine(errorMsg);
                     return -1;  // error
                 }
                 return across;
             }
             catch (DllNotFoundException e)
             {
-                Console.WriteLine("Error in Function GetNumTilesAcross:"+e.Message);
+                errorMsg = "Error: DLL Not found\n";
+                Console.WriteLine(errorMsg + e.Message);
                 return -1;
             }
             
@@ -59,20 +62,23 @@ namespace TrueMarbleData
         /// <returns>
         /// returns down or -1 if error
         /// </returns>
-        public int GetNumTilesDown(int zoom)
+        public int GetNumTilesDown(int zoom, out string errorMsg)
         {
+            errorMsg = null;
             try
             {
                 if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
                 {
-                    Console.WriteLine("Error in DLL Function 'GetNumTiles'");
+                    errorMsg = "Error in DLL Function 'GetNumTiles'";
+                    Console.WriteLine(errorMsg);
                     return -1;  // error
                 }
                 return down;
             }
             catch (DllNotFoundException e)
             {
-                Console.WriteLine("Error in Function GetNumTilesDown:" + e.Message);
+                errorMsg = "Error: DLL Not found\n";
+                Console.WriteLine(errorMsg + e.Message);
                 return -1;
             }
         }
@@ -86,8 +92,9 @@ namespace TrueMarbleData
         /// <returns>
         /// returns height or -1 if error
         /// </returns>
-        public int GetTileHeight()
+        public int GetTileHeight(out string errorMsg)
         {
+            errorMsg = null;
             try
             {
                 if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
@@ -99,7 +106,7 @@ namespace TrueMarbleData
             }
             catch (DllNotFoundException e)
             {
-                Console.WriteLine("Error in Function GetTileHeight:" + e.Message);
+                Console.WriteLine("Error in Function GetTileHeight:\n" + e.Message);
                 return -1;
             }
         }
@@ -126,7 +133,7 @@ namespace TrueMarbleData
             }
             catch (DllNotFoundException e)
             {
-                Console.WriteLine("Error in Function GetTileHeight:" + e.Message);
+                Console.WriteLine("Error in Function GetTileHeight:\n" + e.Message);
                 return -1;
             }
         }
@@ -143,15 +150,17 @@ namespace TrueMarbleData
         /// returns byte array of raw JPG or null if error
         /// </returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public byte[] LoadTile(int zoom, int x, int y)
+        public byte[] LoadTile(int zoom, int x, int y, out string errMsg)
         {
             int size;
             byte[] array = null;
+            errMsg = null;
             try
             {
                 if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)      // get height and width
                 {
-                    Console.WriteLine("Error with DLL function 'GetTileSize'");
+                    errMsg = "Error with DLL function 'GetTileSize'";
+                    Console.WriteLine(errMsg);
                     return null;
                 }
 
@@ -160,21 +169,25 @@ namespace TrueMarbleData
 
                 if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
                 {
-                    Console.WriteLine("Error in DLL Function 'GetNumTiles'");
+                    errMsg = "Error in DLL Function 'GetNumTiles'";
+                    Console.WriteLine(errMsg);
+                    return null;
                 }
 
                 if ((x < across && y < down))// check if coordinates are valid
                 {
                     if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
                     {
-                        Console.WriteLine("Error in DLL Function 'GetTileImageAsRawJPG'");
+                        errMsg = "Error in DLL Function 'GetTileImageAsRawJPG'";
+                        Console.WriteLine(errMsg);
                         return null;
                     }
                 }
             }
             catch (DllNotFoundException e)
             {
-                Console.WriteLine("Error in Function 'LoadTile'"+e.Message);
+                errMsg = "Error in Function 'LoadTile'";
+                Console.WriteLine(errMsg + e.Message);
             }
 
             return array;   // will be null if failure

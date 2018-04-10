@@ -18,12 +18,12 @@ namespace TrueMarbleData
         int GetTileHeight();
 
         [OperationContract]
-        int GetNumTilesAcross(int zoom);
+        int GetNumTilesAcross(int zoom, out string errorMsg);
 
         [OperationContract]
-        int GetNumTilesDown(int zoom);
+        int GetNumTilesDown(int zoom, out string errorMsg);
 
         [OperationContract]
-        byte[] LoadTile(int zoom, int x, int y);
+        byte[] LoadTile(int zoom, int x, int y, out string errMsg);
     }
 }

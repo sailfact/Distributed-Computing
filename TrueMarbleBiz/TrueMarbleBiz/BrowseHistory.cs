@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 
 namespace TrueMarbleBiz
 {
+    /// <summary>
+    /// HistEntry
+    /// nested class for BrowseHistory
+    /// stores infomation of a tile
+    /// zoom,x,y
+    /// </summary>
     [DataContract]
     public class HistEntry
     {
@@ -25,7 +31,10 @@ namespace TrueMarbleBiz
             this.Zoom = zoom;
         }
     }
-
+    /// <summary>
+    /// BrowseHistory
+    /// stores a list of history entries for all the tiles viewed by the client
+    /// </summary>
     [DataContract]
     public class BrowseHistory
     {
@@ -33,13 +42,24 @@ namespace TrueMarbleBiz
         public List<HistEntry> History { get; set; }
         [DataMember]
         public int CurEntryIdx { get; set; }
-
+        /// <summary>
+        /// Constructor for BrowseHistory
+        /// creates new history list sets current index to -1
+        /// </summary>
         public BrowseHistory()
         {
             History = new List<HistEntry>();
             CurEntryIdx = -1;
         }
-
+        /// <summary>
+        /// AddHistEntry
+        /// adds new entry to history list
+        /// if there are history entries infront of the current
+        /// they are removed
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="zoom"></param>
         public void AddHistEntry(int x, int y, int zoom)
         {
             if (History.Count() < CurEntryIdx)
@@ -51,12 +71,18 @@ namespace TrueMarbleBiz
             History.Insert(CurEntryIdx ,new HistEntry(x, y, zoom));
             
         }
-
+        /// <summary>
+        /// GetCurrHist
+        /// </summary>
+        /// <returns>history entry at the current index</returns>
         public HistEntry GetCurrHist()
         {
             return History[CurEntryIdx];
         }
-
+        /// <summary>
+        /// GetHistBack
+        /// </summary>
+        /// <returns>previous history entry if it exists</returns>
         public HistEntry GetHistBack()
         {
             if (CurEntryIdx > 0)
@@ -66,7 +92,10 @@ namespace TrueMarbleBiz
 
             return History[CurEntryIdx];
         }
-
+        /// <summary>
+        /// GetHistForward
+        /// </summary>
+        /// <returns>next history entry if it exists</returns>
         public HistEntry GetHistForward()
         {
             if (CurEntryIdx + 1 < History.Count)   // Make sure there is a entry ahead

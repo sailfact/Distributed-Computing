@@ -102,8 +102,9 @@ namespace TrueMarbleGUI
                 m_zoom = (int)sldZoom.Value;
                 try
                 {
-                    int across, down;
-                    if (((across = m_biz.GetNumTilesAcross(m_zoom)) != -1) && ((down = m_biz.GetNumTilesDown(m_zoom)) != -1))
+                    int across = m_biz.GetNumTilesAcross(m_zoom, out string errorMsg1);
+                    int down = m_biz.GetNumTilesDown(m_zoom, out string errorMsg2);
+                    if (across != -1&&down != -1)
                     {
                         if (m_xValue > across - 1)
                         {
@@ -118,12 +119,12 @@ namespace TrueMarbleGUI
                     }
                     else
                     {
-                        MessageBox.Show("Error occurred while retrieving info from server");
+                        MessageBox.Show(errorMsg1+errorMsg2);
                     }
                 }
                 catch (CommunicationException)       // if server died
                 {
-                    MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n");
+                    MessageBox.Show("Error Connecting to server, please  try again later\n");
                     this.Close();
                 }
             }
@@ -141,7 +142,7 @@ namespace TrueMarbleGUI
             try
             {
                 int down;
-                if ((down = m_biz.GetNumTilesDown(m_zoom)) != -1)
+                if ((down = m_biz.GetNumTilesDown(m_zoom, out string errorMsg)) != -1)
                 {
                     if (m_yValue == 0)      // if  y is at lower limit 
                     {
@@ -155,12 +156,12 @@ namespace TrueMarbleGUI
                 }
                 else
                 {
-                    MessageBox.Show("Error Occurred while communicating with the server please try again later");
+                    MessageBox.Show(errorMsg);
                 }
             }
             catch (CommunicationException ce)   // catch if server dies
             {
-                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
+                MessageBox.Show("Error Connecting to server, please  try again later\n");
                 this.Close();
             }
 
@@ -179,7 +180,7 @@ namespace TrueMarbleGUI
             try
             {
                 int across;
-                if ((across = m_biz.GetNumTilesAcross(m_zoom)) != -1)
+                if ((across = m_biz.GetNumTilesAcross(m_zoom, out string errorMsg)) != -1)
                 {
                     if (m_xValue == 0)      // if x is at lower limit 
                     {
@@ -193,12 +194,12 @@ namespace TrueMarbleGUI
                 }
                 else
                 {
-                    MessageBox.Show("Error Occurred while communicating with the server please try again later");
+                    MessageBox.Show(errorMsg);
                 }
             }
             catch (CommunicationException ce)      // catch if server dies
             {
-                MessageBox.Show("Error Connecting to server, please try again later\n\nError\n" + ce.Message);
+                MessageBox.Show("Error Connecting to server, please try again later\n");
                 this.Close();
             }
         }
@@ -215,7 +216,7 @@ namespace TrueMarbleGUI
             try
             {
                 int down;
-                if ((down = m_biz.GetNumTilesDown(m_zoom)) != -1)
+                if ((down = m_biz.GetNumTilesDown(m_zoom, out string errorMsg)) != -1)
                 {
                     if (m_yValue == down - 1)      // if y is at upper limit 
                     {
@@ -229,12 +230,12 @@ namespace TrueMarbleGUI
                 }
                 else
                 {
-                    MessageBox.Show("Error Occurred while communicating with the server please try again later");
+                    MessageBox.Show(errorMsg);
                 }
             }   
-            catch (CommunicationException ce)      // catch if server dies
+            catch (CommunicationException)      // catch if server dies
             {
-                MessageBox.Show("Error Connecting to server, please try again later\n\nError\n" + ce.Message);
+                MessageBox.Show("Error Connecting to server, please try again later\n");
                 this.Close();
             }
         }
@@ -251,7 +252,7 @@ namespace TrueMarbleGUI
             try
             {
                 int across;
-                if ((across = m_biz.GetNumTilesAcross(m_zoom)) != -1)
+                if ((across = m_biz.GetNumTilesAcross(m_zoom, out string errorMsg)) != -1)
                 {
                     if (m_xValue == across - 1)      // if x is at upper limit
                     {
@@ -261,21 +262,18 @@ namespace TrueMarbleGUI
                     {
                         m_xValue += 1;         // else increment by 2
                     }
-
                     LoadTile(true);     // reload the tile
                 }
                 else
                 {
-                    MessageBox.Show("Error Occurred while communicating with the server please try again later");
+                    MessageBox.Show(errorMsg);
                 }
             }
-            catch (CommunicationException ce)       // catch if server dies
+            catch (CommunicationException)       // catch if server dies
             {
-                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n" + ce.Message);
+                MessageBox.Show("Error Connecting to server, please  try again later\n");
                 this.Close();
             }
-
-            
         }
         
         /// <summary>
@@ -292,25 +290,28 @@ namespace TrueMarbleGUI
                 // used for getting JPG
                 JpegBitmapDecoder decoder;
                 MemoryStream memoryStream;
+                string errorMsg = null;
                 try
                 {
-                    memoryStream = new MemoryStream(m_biz.LoadTile(m_zoom, m_xValue, m_yValue)); // construct memoryStream with byte array for server call
+                    memoryStream = new MemoryStream(m_biz.LoadTile(m_zoom, m_xValue, m_yValue, out errorMsg)); // construct memoryStream with byte array for server call
                     decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None); // decode jpg
                     imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
                     if (addToHist)
+                    {
                         m_biz.AddHistEntry(m_xValue, m_yValue, m_zoom);     // add entry to history
+                    }
                 }
                 catch (ArgumentNullException)
                 {
-                    MessageBox.Show("Error Retrieving Tile From Server");
+                    MessageBox.Show(errorMsg);
                 }
                 catch (FileFormatException)  // catch decoder if it fails
                 {
                     MessageBox.Show("Error occurrd while decoding tile");
                 }
-                catch (CommunicationException ce)   // catch exception if server died for some reason
+                catch (CommunicationException)   // catch exception if server died for some reason
                 {
-                    MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n"+ ce.Message);
+                    MessageBox.Show("Error Connecting to server, please  try again later\n");
                     this.Close();
                 }
             }
@@ -333,7 +334,7 @@ namespace TrueMarbleGUI
             }
             catch (CommunicationException)
             {
-                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n");
+                MessageBox.Show("Error Connecting to server, please  try again later\n");
                 this.Close();
             }
         }
@@ -355,7 +356,7 @@ namespace TrueMarbleGUI
             }
             catch (CommunicationException)
             {
-                MessageBox.Show("Error Connecting to server, please  try again later\n\nError\n");
+                MessageBox.Show("Error Connecting to server, please  try again later\n");
                 this.Close();
             }
         }
@@ -369,7 +370,7 @@ namespace TrueMarbleGUI
         {
             if (result)
             {
-                MessageBox.Show("Images Verified");
+                MessageBox.Show("Images Where Verified");
             }
             else
             {
@@ -419,12 +420,14 @@ namespace TrueMarbleGUI
             catch (CommunicationException)
             {
                 MessageBox.Show("Error occurred between you and the server please try again later");
-                fileStream.Close();
                 this.Close();
             }
             finally
             {
-                fileStream.Close();
+                if (fileStream != null)
+                {
+                    fileStream.Close();
+                }
             }
         }
 
@@ -464,12 +467,14 @@ namespace TrueMarbleGUI
             catch (CommunicationException)
             {
                 MessageBox.Show("Error occurred between you and the server please try again later");
-                fileStream.Close();
                 this.Close();
             }
             finally
             {
-                fileStream.Close();
+                if (fileStream != null)
+                {
+                    fileStream.Close();
+                }
             }
         }
 

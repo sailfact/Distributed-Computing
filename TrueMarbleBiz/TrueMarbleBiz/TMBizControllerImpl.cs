@@ -78,20 +78,21 @@ namespace TrueMarbleBiz
         /// <returns>
         /// returns num tiles across or -1 if failure
         /// </returns>
-        public int GetNumTilesAcross(int zoom)
+        public int GetNumTilesAcross(int zoom, out string errorMsg)
         {
             try
             {
-                int across = m_tmData.GetNumTilesAcross(zoom, out string errMsg);
+                int across = m_tmData.GetNumTilesAcross(zoom, out errorMsg);
                 if (across == -1)
                 {
-                    Console.WriteLine(errMsg);
+                    Console.WriteLine(errorMsg);
                 }
                 return across;
             }
             catch (CommunicationException e)
             {
-                Console.WriteLine("Error: Retreiving NumTilesAcross from Data Server\n\n"+e.Message);
+                errorMsg = "Error: Retreiving NumTilesAcross from Data Server\n\n";
+                Console.WriteLine(errorMsg + e.Message);
                 return -1;
             }
         }
@@ -104,20 +105,21 @@ namespace TrueMarbleBiz
         /// <returns>
         /// returns num tiles down or -1 if failure
         /// </returns>
-        public int GetNumTilesDown(int zoom)
+        public int GetNumTilesDown(int zoom, out string errorMsg)
         {
             try
             {
-                int down = m_tmData.GetNumTilesDown(zoom, out string errMsg);
+                int down = m_tmData.GetNumTilesDown(zoom, out errorMsg);
                 if (down == -1)
                 {
-                    Console.WriteLine(errMsg);
+                    Console.WriteLine(errorMsg);
                 }
                 return down;
             }
             catch (CommunicationException e)
             {
-                Console.WriteLine("Error: Retreiving NumTilesAcross from Data Server\n\n"+e.Message);
+                errorMsg = "Error: Retreiving NumTilesAcross from Data Server\n\n";
+                Console.WriteLine(errorMsg + e.Message);
                 return -1;
             }
         }
@@ -133,20 +135,21 @@ namespace TrueMarbleBiz
         /// byte array of raw tile jpg
         /// or null if error
         /// </returns>
-        public byte[] LoadTile(int zoom, int x, int y)
+        public byte[] LoadTile(int zoom, int x, int y, out string errorMsg)
         {
             try
             {
-                byte[] array = m_tmData.LoadTile(zoom, x, y, out string errMsg);
+                byte[] array = m_tmData.LoadTile(zoom, x, y, out errorMsg);
                 if (array == null)
                 {
-                    Console.WriteLine(errMsg);
+                    Console.WriteLine(errorMsg);
                 }
                 return array;
             }
             catch (CommunicationException e)
             {
-                Console.WriteLine("Error: Retreiving NumTilesDown from Data Server\n\n"+e.Message);
+                errorMsg = "Error: Retreiving NumTilesDown from Data Server\n\n";
+                Console.WriteLine(errorMsg + e.Message);
                 return null;
             }
         }

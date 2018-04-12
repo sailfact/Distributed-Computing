@@ -39,7 +39,7 @@ namespace TrueMarbleData
             {
                 if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
                 {
-                    errorMsg = "Error in DLL Function 'GetNumTiles'";
+                    errorMsg = "Error in DLL Function 'GetNumTiles'\n";
                     Console.WriteLine(errorMsg);
                     return -1;  // error
                 }
@@ -69,7 +69,7 @@ namespace TrueMarbleData
             {
                 if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
                 {
-                    errorMsg = "Error in DLL Function 'GetNumTiles'";
+                    errorMsg = "Error in DLL Function 'GetNumTiles'\n";
                     Console.WriteLine(errorMsg);
                     return -1;  // error
                 }
@@ -99,14 +99,16 @@ namespace TrueMarbleData
             {
                 if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
                 {
-                    Console.WriteLine("Error in DLL Function 'GetTileSize'");
+                    errorMsg = "Error in DLL Function 'GetTileSize'\n";
+                    Console.WriteLine(errorMsg);
                     return -1;  // error
                 }
                 return height;
             }
             catch (DllNotFoundException e)
             {
-                Console.WriteLine("Error in Function GetTileHeight:\n" + e.Message);
+                errorMsg = "Error in Function GetTileHeight\n";
+                Console.WriteLine(errorMsg + e.Message);
                 return -1;
             }
         }
@@ -126,7 +128,7 @@ namespace TrueMarbleData
             {
                 if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
                 {
-                    errorMsg = "Error in DLL Function 'GetTileSize'";
+                    errorMsg = "Error in DLL Function 'GetTileSize'\n";
                     Console.WriteLine(errorMsg);
                     return -1;  // error
                 }
@@ -135,7 +137,7 @@ namespace TrueMarbleData
             }
             catch (DllNotFoundException e)
             {
-                errorMsg = "Error in Function GetTileHeight:\n";
+                errorMsg = "Error in Function GetTileHeight\n";
                 Console.WriteLine(errorMsg + e.Message);
                 return -1;
             }
@@ -162,7 +164,7 @@ namespace TrueMarbleData
             {
                 if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)      // get height and width
                 {
-                    errMsg = "Error with DLL function 'GetTileSize'";
+                    errMsg = "Error with DLL function 'GetTileSize'\n";
                     Console.WriteLine(errMsg);
                     return null;
                 }
@@ -172,7 +174,7 @@ namespace TrueMarbleData
 
                 if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
                 {
-                    errMsg = "Error in DLL Function 'GetNumTiles'";
+                    errMsg = "Error in DLL Function 'GetNumTiles'\n";
                     Console.WriteLine(errMsg);
                     return null;
                 }
@@ -181,7 +183,7 @@ namespace TrueMarbleData
                 {
                     if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
                     {
-                        errMsg = "Error in DLL Function 'GetTileImageAsRawJPG'";
+                        errMsg = "Error in DLL Function 'GetTileImageAsRawJPG'\n";
                         Console.WriteLine(errMsg);
                         return null;
                     }

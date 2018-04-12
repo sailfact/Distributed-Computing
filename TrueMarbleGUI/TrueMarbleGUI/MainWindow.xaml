@@ -17,13 +17,11 @@
         <Button x:Name="btnForward" Content="_Forward" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="75" Click="BtnForward_Click"/>
         <Button x:Name="btnBack" Content="_Back" HorizontalAlignment="Right" Margin="0,0,100,15" VerticalAlignment="Bottom" Width="75" Click="BtnBack_Click"/>
         <Menu HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" VerticalAlignment="Top" Width="100">
-            <MenuItem x:Name="mitFile" Header="File" Height="17" Width="100">
+            <MenuItem x:Name="mitFile" Header="File" Height="20" Width="50">
                 <MenuItem Header="Save" HorizontalAlignment="Left" Height="17" Width="139" Click="MenuItem_Click_Save"/>
                 <MenuItem Header="Load" HorizontalAlignment="Left" Height="17" Width="139" Click="MenuItem_Click_Load"/>
             </MenuItem>
-        </Menu>
-        <Menu HorizontalAlignment="Left" Height="20" Margin="42,0,0,0" VerticalAlignment="Top" Width="63">
-            <MenuItem Header="History" Height="20" Width="63" Click="MenuItem_Click_Hist"/>
+            <MenuItem Header="History" Height="20" Width="50" Click="MenuItem_Click_Hist"/>
         </Menu>
     </Grid>
 </Window>

@@ -59,19 +59,19 @@ namespace TrueMarbleGUI
                 m_biz = channelFactory.CreateChannel();  // create true marblebiz on remote server
                 m_biz.VerifyTilesAsync();
             }
-            catch (ArgumentNullException e1)
+            catch (ArgumentNullException)
             {
-                MessageBox.Show("Error Connecting to Server, please  try again later\n\nError\n" + e1.Message);
+                MessageBox.Show("Error Connecting to Server, please  try again later\n");
                 this.Close();
             }
-            catch (InvalidOperationException e2)
+            catch (InvalidOperationException)
             {
-                MessageBox.Show("Error Connecting to Server, please  try again later\n\nError\n" + e2.Message);
+                MessageBox.Show("Error Connecting to Server, please  try again later\n");
                 this.Close();
             }
-            catch (EndpointNotFoundException e3)
+            catch (EndpointNotFoundException)
             {
-                MessageBox.Show("Service not avialable at this time, please  try again later\n\nError\n" + e3.Message);
+                MessageBox.Show("Service not avialable at this time, please  try again later\n");
                 this.Close();
             }
         }
@@ -159,13 +159,11 @@ namespace TrueMarbleGUI
                     MessageBox.Show(errorMsg);
                 }
             }
-            catch (CommunicationException ce)   // catch if server dies
+            catch (CommunicationException)   // catch if server dies
             {
                 MessageBox.Show("Error Connecting to server, please  try again later\n");
                 this.Close();
             }
-
-            
         }
 
         /// <summary>
@@ -197,7 +195,7 @@ namespace TrueMarbleGUI
                     MessageBox.Show(errorMsg);
                 }
             }
-            catch (CommunicationException ce)      // catch if server dies
+            catch (CommunicationException)      // catch if server dies
             {
                 MessageBox.Show("Error Connecting to server, please try again later\n");
                 this.Close();
@@ -393,7 +391,8 @@ namespace TrueMarbleGUI
             try
             {
                 browseHistory = m_biz.GetFullHistory();
-                fileStream = new FileStream("C:/Users/Public/History.xml", FileMode.Create, FileAccess.Write);
+                string userpath = Environment.GetEnvironmentVariable("homepath");
+                fileStream = new FileStream("C:"+userpath+"/History.xml", FileMode.Create, FileAccess.Write);
                 serializer = new DataContractSerializer(typeof(BrowseHistory));
                 serializer.WriteObject(fileStream, browseHistory);
             }
@@ -407,7 +406,7 @@ namespace TrueMarbleGUI
             }
             catch (IOException)
             {
-                MessageBox.Show("Error While History History Occurred\n\n");
+                MessageBox.Show("Error While Saving History Occurred\n\n");
             }
             catch (SerializationException)
             {
@@ -444,7 +443,8 @@ namespace TrueMarbleGUI
             DataContractSerializer serializer;
             try
             {
-                fileStream = new FileStream("C:/Users/Public/History.xml", FileMode.Open, FileAccess.Read);
+                string userpath = Environment.GetEnvironmentVariable("homepath");   // get users home directory
+                fileStream = new FileStream("C:"+userpath+"/History.xml", FileMode.Open, FileAccess.Read);
                 serializer = new DataContractSerializer(typeof(BrowseHistory));
 
                 browseHistory = (BrowseHistory)serializer.ReadObject(fileStream);

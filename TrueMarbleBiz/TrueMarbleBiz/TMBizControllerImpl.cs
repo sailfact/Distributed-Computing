@@ -52,18 +52,18 @@ namespace TrueMarbleBiz
             }
             catch (ArgumentNullException e1)
             {
-                Console.WriteLine("Error: Binding URL to ChannelFactory\n\n"+e1.Message);
+                Console.WriteLine("\nError: Binding URL to ChannelFactory\n"+e1.Message);
                 Environment.Exit(1);
                 
             }
             catch (CommunicationException e2)
             {
-                Console.WriteLine("Error: Communicating with Data Server \n\n"+e2.Message);
+                Console.WriteLine("\nError: Communicating with Data Server \n"+e2.Message);
                 Environment.Exit(1);
             }
             catch (InvalidOperationException e3)
             {
-                Console.WriteLine("Error: Modifying TcpBinding Message Quota\n\n"+e3.Message);
+                Console.WriteLine("\nError: Modifying TcpBinding Message Quota\n"+e3.Message);
                 Environment.Exit(1);
             }
 
@@ -91,7 +91,7 @@ namespace TrueMarbleBiz
             }
             catch (CommunicationException e)
             {
-                errorMsg = "Error: Retreiving NumTilesAcross from Data Server\n\n";
+                errorMsg = "Error: Retreiving NumTilesAcross from Data Server\n";
                 Console.WriteLine(errorMsg + e.Message);
                 return -1;
             }
@@ -118,7 +118,7 @@ namespace TrueMarbleBiz
             }
             catch (CommunicationException e)
             {
-                errorMsg = "Error: Retreiving NumTilesAcross from Data Server\n\n";
+                errorMsg = "Error: Retreiving NumTilesAcross from Data Server\n";
                 Console.WriteLine(errorMsg + e.Message);
                 return -1;
             }
@@ -148,7 +148,7 @@ namespace TrueMarbleBiz
             }
             catch (CommunicationException e)
             {
-                errorMsg = "Error: Retreiving NumTilesDown from Data Server\n\n";
+                errorMsg = "Error: Retreiving Tile from Data Server\n";
                 Console.WriteLine(errorMsg + e.Message);
                 return null;
             }
@@ -198,7 +198,7 @@ namespace TrueMarbleBiz
                             }
                             catch (ArgumentNullException)  // Loadtiles failed
                             {
-                                Console.WriteLine("Error Loading Tiles from Data Server, in Function'Verify Tiles'\n");
+                                Console.WriteLine("\nError Loading Tiles from Data Server, in Function'Verify Tiles'\n");
                                 return false;   // notify gui that tiles can't be verified
                             }
                         }
@@ -207,7 +207,7 @@ namespace TrueMarbleBiz
             }
             catch (CommunicationException e2) // Data server is offline
             {
-                Console.WriteLine("Error: Communicating With Data Server, in Function 'VerifyTiles'\n\n" + e2.Message);
+                Console.WriteLine("\nError: Communicating With Data Server, in Function 'VerifyTiles'\n" + e2.Message);
                 return false;// notify gui that tiles can't be verified
             }
 
@@ -251,14 +251,13 @@ namespace TrueMarbleBiz
                     ob = (ITMBizControllerCallback)asyncObj.AsyncState;     // get remote client obj reference
                     iResult = addDel.EndInvoke(asyncObj);   // retrieve result 
                 }
-
-            
                 asyncObj.AsyncWaitHandle.Close();
+                Console.WriteLine("Verification Complete.\n");
                 ob.OnVerificationComplete(iResult);     // send result to client
             }
             catch (CommunicationException e)
             {
-                Console.WriteLine("Error: Sending Tile Verification to Client\n\n"+e.Message);
+                Console.WriteLine("\nError: Sending Tile Verification to Client\n"+e.Message);
             }
         }
 

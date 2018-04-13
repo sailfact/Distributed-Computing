@@ -52,9 +52,7 @@ namespace TrueMarbleGUI
                 // incease default message size quota
                 tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
                 tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
-
-                // bind channel to url
-            
+        
                 channelFactory = new DuplexChannelFactory<ITMBizController>(new InstanceContext(this), tcpBinding, url);   // bind url to channel factory
                 m_biz = channelFactory.CreateChannel();  // create true marblebiz on remote server
                 m_biz.VerifyTilesAsync();
@@ -106,18 +104,18 @@ namespace TrueMarbleGUI
                     int down = m_biz.GetNumTilesDown(m_zoom, out string errorMsg2);
                     if (across != -1&&down != -1)
                     {
-                        if (m_xValue > across - 1)
+                        if (m_xValue > across - 1)  // if the current x value is more than the tiles accross
                         {
-                            m_xValue = across - 1;
+                            m_xValue = across - 1;  // change x to max accross
                         }
 
-                        if (m_yValue > down - 1)
+                        if (m_yValue > down - 1)    // if the current y value is more than the tiles down
                         {
-                            m_yValue = down - 1;
+                            m_yValue = down - 1;    // change the y to max down
                         }
                         LoadTile(true);     // reload the tile
                     }
-                    else
+                    else    // error                 
                     {
                         MessageBox.Show(errorMsg1+errorMsg2);
                     }
@@ -326,9 +324,11 @@ namespace TrueMarbleGUI
         {
             try
             {
-                m_biz.HistBack(out m_xValue, out m_yValue, out m_zoom);
-
-                LoadTile(false);
+                if (m_biz.GetHistIdx() != -1)
+                {
+                    m_biz.HistBack(out m_xValue, out m_yValue, out m_zoom);
+                    LoadTile(false);
+                }
             }
             catch (CommunicationException)
             {
@@ -348,9 +348,11 @@ namespace TrueMarbleGUI
         {
             try
             {
-                m_biz.HistForward(out m_xValue, out m_yValue, out m_zoom);
-
-                LoadTile(false);
+                if (m_biz.GetHistIdx() != -1)
+                {
+                    m_biz.HistForward(out m_xValue, out m_yValue, out m_zoom);
+                    LoadTile(false);
+                }
             }
             catch (CommunicationException)
             {

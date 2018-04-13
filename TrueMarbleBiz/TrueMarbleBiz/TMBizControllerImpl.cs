@@ -118,7 +118,7 @@ namespace TrueMarbleBiz
             }
             catch (CommunicationException e)
             {
-                errorMsg = "Error: Retreiving NumTilesAcross from Data Server\n";
+                errorMsg = "Error: Retreiving NumTilesDown from Data Server\n";
                 Console.WriteLine(errorMsg + e.Message);
                 return -1;
             }
@@ -314,6 +314,15 @@ namespace TrueMarbleBiz
             x = entry.X;
             y = entry.Y;
             zoom = entry.Zoom;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public int GetHistIdx()
+        {
+            return m_hist.CurEntryIdx;
         }
 
         /// <summary>

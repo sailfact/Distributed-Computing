@@ -41,6 +41,9 @@ namespace TrueMarbleBiz
         void HistForward(out int x, out int y, out int zoom);
 
         [OperationContract]
+        int GetHistIdx();
+
+        [OperationContract]
         BrowseHistory GetFullHistory();
 
         [OperationContract]

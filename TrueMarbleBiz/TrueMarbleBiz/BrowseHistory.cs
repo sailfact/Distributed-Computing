@@ -101,9 +101,10 @@ namespace TrueMarbleBiz
             if (CurEntryIdx + 1 < History.Count)   // Make sure there is a entry ahead
             {
                 CurEntryIdx++;  // increment current idx
-            }
 
-            return History[CurEntryIdx];
+                return History[CurEntryIdx];
+            }
+            return null;
         }
     }
 }

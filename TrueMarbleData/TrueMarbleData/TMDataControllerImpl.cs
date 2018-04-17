@@ -23,7 +23,6 @@ namespace TrueMarbleData
         {
             Console.WriteLine("Server Created");
         }
-
         /// <summary>
         /// GetNumTilesAcross
         /// returns number of tiles across depending on the level of zoom
@@ -31,6 +30,7 @@ namespace TrueMarbleData
         /// <param name="zoom"></param>
         /// <returns>
         /// returns across or -1 if error
+        /// aswell as a error message via reference
         /// </returns>
         public int GetNumTilesAcross(int zoom, out string errorMsg)
         {
@@ -53,7 +53,6 @@ namespace TrueMarbleData
             }
             
         }
-
         /// <summary>
         /// GetNumTilesDown
         /// returns number of tiles down depending on the level of zoom
@@ -61,6 +60,7 @@ namespace TrueMarbleData
         /// <param name="zoom"></param>
         /// <returns>
         /// returns down or -1 if error
+        /// aswell as a error message via reference
         /// </returns>
         public int GetNumTilesDown(int zoom, out string errorMsg)
         {
@@ -82,8 +82,6 @@ namespace TrueMarbleData
                 return -1;
             }
         }
-
-
         /// <summary>
         /// GetTileHeight
         /// returns tile height
@@ -91,6 +89,7 @@ namespace TrueMarbleData
         /// </summary>
         /// <returns>
         /// returns height or -1 if error
+        /// aswell as a error message via reference
         /// </returns>
         public int GetTileHeight(out string errorMsg)
         {
@@ -112,7 +111,6 @@ namespace TrueMarbleData
                 return -1;
             }
         }
-
         /// <summary>
         /// GetTileWidth
         /// returns tile width 
@@ -120,6 +118,7 @@ namespace TrueMarbleData
         /// </summary>
         /// <returns>
         /// returns width or -1 or error
+        /// aswell as a error message via reference
         /// </return>
         public int GetTileWidth(out string errorMsg)
         {
@@ -142,7 +141,6 @@ namespace TrueMarbleData
                 return -1;
             }
         }
-
         /// <summary>
         /// LoadTile
         /// takes zoom, x, and y
@@ -153,6 +151,7 @@ namespace TrueMarbleData
         /// <param name="y"></param>
         /// <returns>
         /// returns byte array of raw JPG or null if error
+        /// aswell as a error message via reference
         /// </returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public byte[] LoadTile(int zoom, int x, int y, out string errMsg)

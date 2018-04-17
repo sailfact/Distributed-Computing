@@ -26,8 +26,7 @@ namespace TrueMarbleBiz
     {
         private ITMDataController m_tmData;
         private BrowseHistory m_hist;
-        private delegate bool VerifyOperation();
-        
+        private delegate bool VerifyOperation();     
         /// <summary>
         /// Constructor for TMBizController
         /// creates channel to Data server
@@ -68,7 +67,6 @@ namespace TrueMarbleBiz
             }
 
         }
-
         /// <summary>
         /// GetNumTilesAcross
         /// gets the across value for the corresponding zoom level
@@ -77,6 +75,7 @@ namespace TrueMarbleBiz
         /// <param name="zoom"></param>
         /// <returns>
         /// returns num tiles across or -1 if failure
+        /// aswell as a error message via reference
         /// </returns>
         public int GetNumTilesAcross(int zoom, out string errorMsg)
         {
@@ -96,7 +95,6 @@ namespace TrueMarbleBiz
                 return -1;
             }
         }
-
         /// <summary>
         /// gets the down value for the corresponding zoom level
         /// from the data tier and relays it to the gui
@@ -104,6 +102,7 @@ namespace TrueMarbleBiz
         /// <param name="zoom"></param>
         /// <returns>
         /// returns num tiles down or -1 if failure
+        /// aswell as a error message via reference
         /// </returns>
         public int GetNumTilesDown(int zoom, out string errorMsg)
         {
@@ -122,8 +121,7 @@ namespace TrueMarbleBiz
                 Console.WriteLine(errorMsg + e.Message);
                 return -1;
             }
-        }
-        
+        }      
         /// <summary>
         /// LoadTile
         /// Loads tile from data tier and returns byte array
@@ -153,7 +151,6 @@ namespace TrueMarbleBiz
                 return null;
             }
         }
-
         /// <summary>
         /// VerifyTiles
         /// loops through every tile coordinate and check whether they can be decoded
@@ -213,7 +210,6 @@ namespace TrueMarbleBiz
 
             return verified;
         }
-
         /// <summary>
         /// VerifyTilesAsync
         /// assigns a delegate to the function Verify tiles to be run Asyncronously
@@ -229,7 +225,6 @@ namespace TrueMarbleBiz
 
             Console.WriteLine("Waiting for Verification...");
         }
-
         /// <summary>
         /// VerifyTiles_OnComplete
         /// Callback funtion for Delgate
@@ -260,9 +255,9 @@ namespace TrueMarbleBiz
                 Console.WriteLine("\nError: Sending Tile Verification to Client\n"+e.Message);
             }
         }
-
         /// <summary>
-        /// 
+        /// AddHistEntry
+        /// add x,y and zoom to Browse History
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -273,7 +268,8 @@ namespace TrueMarbleBiz
         }
 
         /// <summary>
-        /// 
+        /// GetCurrHistEntry
+        /// get x, y and zoom from the current history entry
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -285,7 +281,6 @@ namespace TrueMarbleBiz
             y = entry.Y;
             zoom = entry.Zoom;
         }
-
         /// <summary>
         /// HistBack
         /// sets zoom,x,y to last hist entry
@@ -300,7 +295,6 @@ namespace TrueMarbleBiz
             y = entry.Y;
             zoom = entry.Zoom;
         }
-
         /// <summary>
         /// HistForward
         /// sets zoom,x,y to next hist entry
@@ -315,26 +309,25 @@ namespace TrueMarbleBiz
             y = entry.Y;
             zoom = entry.Zoom;
         }
-
         /// <summary>
-        /// 
+        /// GetHistIdx
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// returns the current history index for m_hist
+        /// </returns>
         public int GetHistIdx()
         {
             return m_hist.CurEntryIdx;
         }
-
         /// <summary>
         /// GetFullHistory
         /// returns BrowseHistory object
         /// </summary>
-        /// <returns></returns>
+        /// <returns>history list</returns>
         public BrowseHistory GetFullHistory()
         {
             return m_hist;
         }
-
         /// <summary>
         /// SetFullHistory
         /// sets a new BrowseHistory object and sets curidx to the end

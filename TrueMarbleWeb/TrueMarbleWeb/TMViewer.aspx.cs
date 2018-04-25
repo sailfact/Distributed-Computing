@@ -7,10 +7,6 @@ using System.Web.UI.WebControls;
 
 public partial class _Default : Page
 {
-    protected int m_zoomPath;
-    protected int m_xPath;
-    protected int m_yPath;
-
     protected void Page_Load(object sender, EventArgs e)
     {
 
@@ -18,58 +14,11 @@ public partial class _Default : Page
 
     protected void BtnSubmit_ServerClick(object sender, EventArgs e)
     {
+        int x = Convert.ToInt32(txtX.Value);
+        int y = Convert.ToInt32(txtY.Value);
         int zoom = Convert.ToInt32(txtZoom.Value);
-        int zoomPath = (int)(Math.Pow(2.0, (double)(zoom+1)));
-        
-        int xPath = Convert.ToInt32(txtX.Value);
-        int yPath = Convert.ToInt32(txtY.Value);
 
-        LoadTile(zoomPath, xPath, yPath);
-    }
-
-    protected void BtnWest_ServerClick(object sender, EventArgs e)
-    {
-        int zoomPath = (int)(Math.Pow(2.0, (double)(Convert.ToInt32(txtZoom.Value) + 1)));
-        int xPath = Convert.ToInt32(txtX.Value) + 1;
-        txtX.Value = xPath.ToString();
-        int yPath = Convert.ToInt32(txtY.Value);
-
-        LoadTile(zoomPath, xPath, yPath);
-    }
-
-    protected void BtnEast_ServerClick(object sender, EventArgs e)
-    {
-        int zoomPath = (int)(Math.Pow(2.0, (double)(Convert.ToInt32(txtZoom.Value) + 1)));
-        int xPath = Convert.ToInt32(txtX.Value) - 1;
-        txtX.Value = xPath.ToString();
-        int yPath = Convert.ToInt32(txtY.Value);
-
-        LoadTile(zoomPath, xPath, yPath);
-    }
-
-    protected void BtnNorth_ServerClick(object sender, EventArgs e)
-    {
-        int zoomPath = (int)(Math.Pow(2.0, (double)(Convert.ToInt32(txtZoom.Value) + 1)));
-        int xPath = Convert.ToInt32(txtX.Value);
-        int yPath = Convert.ToInt32(txtY.Value) - 1;
-        txtY.Value = yPath.ToString();
-
-        LoadTile(zoomPath, xPath, yPath);
-    }
-
-    protected void BtnSouth_ServerClick(object sender, EventArgs e)
-    {
-        int zoomPath = (int)(Math.Pow(2.0, (double)(Convert.ToInt32(txtZoom.Value) + 1)));
-        int xPath = Convert.ToInt32(txtX.Value);
-        int yPath = Convert.ToInt32(txtY.Value) + 1;
-        txtY.Value = yPath.ToString();
-
-        LoadTile(zoomPath, xPath, yPath);
-    }
-
-    protected void LoadTile(int zoom, int x, int y)
-    {
-        /// Tiles / TrueMarble / res###km/tile_###_###.jpg
-        imgTile.Src = "Tiles/TrueMarble/res" + zoom.ToString("000") + "km/tile_" + x.ToString("000") + "_" + y.ToString("000") + ".jpg";
+        string path = "Tiles/TrueMarble/res" + zoom.ToString("000") + "km_" + x.ToString("000") + "_" + y.ToString("000") + ".jpg";
+        imgTile.Src = path;
     }
 }

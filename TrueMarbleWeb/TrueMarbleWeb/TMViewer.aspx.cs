@@ -70,6 +70,6 @@ public partial class _Default : Page
     protected void LoadTile(int zoom, int x, int y)
     {
         /// Tiles / TrueMarble / res###km/tile_###_###.jpg
-        imgTile.Src = "Tiles/TrueMarble/res" + zoom.ToString("000") + "km/tile_" + x.ToString("000") + "_" + y.ToString("000") + ".jpg";
+        imgTile.Src = "TMTileServer.ashx?x=" + x.ToString("0") + "&y=" + y.ToString("0") + "&zoom=" + zoom.ToString("0");
     }
 }

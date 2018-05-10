@@ -234,7 +234,7 @@ namespace TrueMarbleBiz
         public void VerifyTiles_OnComplete(IAsyncResult res)
         {
             bool iResult = false;       // result of verification
-            VerifyOperation addDel;     // delegate function reference
+            VerifyOperation del;     // delegate function reference
             ITMBizControllerCallback ob = null;     // remote client object reference
             AsyncResult asyncObj = (AsyncResult)res;    // result from async function
 
@@ -242,9 +242,9 @@ namespace TrueMarbleBiz
             {
                 if (asyncObj.EndInvokeCalled == false)      // if EndInvoke() has not been called
                 {
-                    addDel = (VerifyOperation)asyncObj.AsyncDelegate;   // gain access to delegate
+                    del = (VerifyOperation)asyncObj.AsyncDelegate;   // gain access to delegate
                     ob = (ITMBizControllerCallback)asyncObj.AsyncState;     // get remote client obj reference
-                    iResult = addDel.EndInvoke(asyncObj);   // retrieve result 
+                    iResult = del.EndInvoke(asyncObj);   // retrieve result 
                 }
                 asyncObj.AsyncWaitHandle.Close();
                 Console.WriteLine("Verification Complete.\n");

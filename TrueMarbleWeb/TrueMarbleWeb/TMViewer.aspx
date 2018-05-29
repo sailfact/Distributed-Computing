@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head runat="server"><title>TrueMarble Viewer</title></head>
     <body>
-        <form id="frmMain" runat="server">
+        <form id="frmMain" runat="server" method="get">
             <div>
                 <p>
                     <input id="txtX" type="hidden" runat="server" value="0"/>

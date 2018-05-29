@@ -100,25 +100,18 @@ namespace TrueMarbleGUI
                 m_zoom = (int)sldZoom.Value;
                 try
                 {
-                    int across = m_biz.GetNumTilesAcross(m_zoom, out string errorMsg1);
-                    int down = m_biz.GetNumTilesDown(m_zoom, out string errorMsg2);
-                    if (across != -1&&down != -1)
+                    int across = m_biz.GetNumTilesAcross(m_zoom);
+                    int down = m_biz.GetNumTilesDown(m_zoom);
+                    if (m_xValue > across - 1)  // if the current x value is more than the tiles accross
                     {
-                        if (m_xValue > across - 1)  // if the current x value is more than the tiles accross
-                        {
-                            m_xValue = across - 1;  // change x to max accross
-                        }
+                        m_xValue = across - 1;  // change x to max accross
+                    }
 
-                        if (m_yValue > down - 1)    // if the current y value is more than the tiles down
-                        {
-                            m_yValue = down - 1;    // change the y to max down
-                        }
-                        LoadTile(true);     // reload the tile
-                    }
-                    else    // error                 
+                    if (m_yValue > down - 1)    // if the current y value is more than the tiles down
                     {
-                        MessageBox.Show(errorMsg1+errorMsg2);
+                        m_yValue = down - 1;    // change the y to max down
                     }
+                    LoadTile(true);     // reload the tile
                 }
                 catch (CommunicationException)       // if server died
                 {
@@ -139,23 +132,19 @@ namespace TrueMarbleGUI
         {
             try
             {
-                int down;
-                if ((down = m_biz.GetNumTilesDown(m_zoom, out string errorMsg)) != -1)
+                if (m_yValue == 0)      // if  y is at lower limit 
                 {
-                    if (m_yValue == 0)      // if  y is at lower limit 
-                    {
-                        m_yValue = down - 1;       // roll back to end
-                    }
-                    else
-                    {
-                        m_yValue--;      // else increment -1
-                    }
-                    LoadTile(true);     // reload the tile
+                    m_yValue = m_biz.GetNumTilesDown(m_zoom) - 1;       // roll back to end
                 }
                 else
                 {
-                    MessageBox.Show(errorMsg);
+                    m_yValue--;      // else increment -1
                 }
+                LoadTile(true);     // reload the tile
+            }
+            catch (FaultException<BizServerFault> ex)
+            {
+                MessageBox.Show(ex.Detail.Operation + "\n\n" + ex.Detail.Message);
             }
             catch (CommunicationException)   // catch if server dies
             {
@@ -175,23 +164,19 @@ namespace TrueMarbleGUI
         {
             try
             {
-                int across;
-                if ((across = m_biz.GetNumTilesAcross(m_zoom, out string errorMsg)) != -1)
+                if (m_xValue == 0)      // if x is at lower limit 
                 {
-                    if (m_xValue == 0)      // if x is at lower limit 
-                    {
-                        m_xValue = across - 1;       // roll back to start
-                    }
-                    else
-                    {
-                        m_xValue -= 1;      // else increment - 1;
-                    }
-                    LoadTile(true);     // reload the tile
+                    m_xValue = m_biz.GetNumTilesAcross(m_zoom) - 1;       // roll back to start
                 }
                 else
                 {
-                    MessageBox.Show(errorMsg);
+                    m_xValue -= 1;      // else increment - 1;
                 }
+                LoadTile(true);     // reload the tile
+            }
+            catch (FaultException<BizServerFault> ex)
+            {
+                MessageBox.Show(ex.Detail.Operation + "\n\n" + ex.Detail.Message);
             }
             catch (CommunicationException)      // catch if server dies
             {
@@ -211,24 +196,20 @@ namespace TrueMarbleGUI
         {
             try
             {
-                int down;
-                if ((down = m_biz.GetNumTilesDown(m_zoom, out string errorMsg)) != -1)
+                if (m_yValue == m_biz.GetNumTilesDown(m_zoom) - 1)      // if y is at upper limit 
                 {
-                    if (m_yValue == down - 1)      // if y is at upper limit 
-                    {
-                        m_yValue = 0;       // roll back to start
-                    }
-                    else
-                    {
-                        m_yValue += 1;      // else increment 2
-                    }
-                    LoadTile(true);     // reload the tile
+                    m_yValue = 0;       // roll back to start
                 }
                 else
                 {
-                    MessageBox.Show(errorMsg);
+                    m_yValue += 1;      // else increment 2
                 }
-            }   
+                LoadTile(true);     // reload the tile
+            }
+            catch (FaultException<BizServerFault> ex)
+            {
+                MessageBox.Show(ex.Detail.Operation + "\n\n" + ex.Detail.Message);
+            }
             catch (CommunicationException)      // catch if server dies
             {
                 MessageBox.Show("Error Connecting to server, please try again later\n");
@@ -247,23 +228,19 @@ namespace TrueMarbleGUI
         {
             try
             {
-                int across;
-                if ((across = m_biz.GetNumTilesAcross(m_zoom, out string errorMsg)) != -1)
+                if (m_xValue == m_biz.GetNumTilesAcross(m_zoom) - 1)
                 {
-                    if (m_xValue == across - 1)      // if x is at upper limit
-                    {
-                        m_xValue = 0;       // roll back to start
-                    }
-                    else
-                    {
-                        m_xValue += 1;         // else increment by 2
-                    }
-                    LoadTile(true);     // reload the tile
+                    m_xValue = 0;       // roll back to start
                 }
                 else
                 {
-                    MessageBox.Show(errorMsg);
+                    m_xValue += 1;         // else increment by 2
                 }
+                LoadTile(true);     // reload the tile
+            }
+            catch (FaultException<BizServerFault> ex)
+            {
+                MessageBox.Show(ex.Detail.Operation + "\n\n" + ex.Detail.Message);
             }
             catch (CommunicationException)       // catch if server dies
             {
@@ -289,13 +266,17 @@ namespace TrueMarbleGUI
                 string errorMsg = null;
                 try
                 {
-                    memoryStream = new MemoryStream(m_biz.LoadTile(m_zoom, m_xValue, m_yValue, out errorMsg)); // construct memoryStream with byte array for server call
+                    memoryStream = new MemoryStream(m_biz.LoadTile(m_zoom, m_xValue, m_yValue)); // construct memoryStream with byte array for server call
                     decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None); // decode jpg
                     imgTile.Source = decoder.Frames[0]; // assign jpg to imgTile.source
                     if (addToHist)
                     {
                         m_biz.AddHistEntry(m_xValue, m_yValue, m_zoom);     // add entry to history
                     }
+                }
+                catch (FaultException<BizServerFault> e)
+                {
+                    MessageBox.Show(e.Detail.Operation + "\n\n" + e.Detail.Message);
                 }
                 catch (ArgumentNullException)
                 {
@@ -368,14 +349,17 @@ namespace TrueMarbleGUI
         /// <param name="result"></param>
         public void OnVerificationComplete(bool result)
         {
-            if (result)
+            this.Dispatcher.Invoke(() => 
             {
-                MessageBox.Show("Images Where Verified");
-            }
-            else
-            {
-                MessageBox.Show("Images Where Not Verified");
-            }
+                if (result)
+                {
+                    TxtBlock.Text = "Images Verified";
+                }
+                else
+                {
+                    TxtBlock.Text = "Images Not Verified";
+                }
+            });
         }
 
         /// <summary>
@@ -491,7 +475,16 @@ namespace TrueMarbleGUI
             try
             {
                 DisplayHistory histWind = new DisplayHistory(m_biz.GetFullHistory());
-                histWind.ShowDialog();
+                if (histWind.ShowDialog() == true)
+                {
+                    if (histWind.HistEntry != null)
+                    {
+                        m_xValue = histWind.HistEntry.X;
+                        m_yValue = histWind.HistEntry.Y;
+                        m_zoom = histWind.HistEntry.Zoom;
+                        LoadTile(false);
+                    }                    
+                }
             }
             catch (InvalidOperationException)
             {

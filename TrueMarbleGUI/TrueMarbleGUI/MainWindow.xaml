@@ -23,5 +23,8 @@
             </MenuItem>
             <MenuItem Header="History" Height="20" Width="50" Click="MenuItem_Click_Hist"/>
         </Menu>
+        <StatusBar x:Name="StatusBar" HorizontalAlignment="Left" Height="20" Margin="0,0,0,0" VerticalAlignment="Bottom" Width="100">
+            <TextBlock Name="TxtBlock" Text="" Width="auto"/>
+        </StatusBar>
     </Grid>
 </Window>

@@ -11,13 +11,13 @@ namespace TrueMarbleBiz
     public interface ITMBizController
     {
         [OperationContract]
-        int GetNumTilesAcross(int zoom, out string errorMsg);
+        int GetNumTilesAcross(int zoom);
 
         [OperationContract]
-        int GetNumTilesDown(int zoom, out string errorMsg);
+        int GetNumTilesDown(int zoom);
 
         [OperationContract]
-        byte[] LoadTile(int zoom, int x, int y, out string errorMsg);
+        byte[] LoadTile(int zoom, int x, int y);
 
         [OperationContract]
         bool VerifyTiles();

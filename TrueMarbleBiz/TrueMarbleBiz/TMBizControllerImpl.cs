@@ -77,22 +77,19 @@ namespace TrueMarbleBiz
         /// returns num tiles across or -1 if failure
         /// aswell as a error message via reference
         /// </returns>
-        public int GetNumTilesAcross(int zoom, out string errorMsg)
+        public int GetNumTilesAcross(int zoom)
         {
             try
             {
-                int across = m_tmData.GetNumTilesAcross(zoom, out errorMsg);
-                if (across == -1)
-                {
-                    Console.WriteLine(errorMsg);
-                }
-                return across;
+                return m_tmData.GetNumTilesAcross(zoom);
+            }
+            catch (FaultException<DataServerFault>)
+            {
+                throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.GetNumTilesDown", "Error In Data Server"));
             }
             catch (CommunicationException e)
             {
-                errorMsg = "Error: Retreiving NumTilesAcross from Data Server\n";
-                Console.WriteLine(errorMsg + e.Message);
-                return -1;
+                throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.GetNumTilesAcross", "Error communicating with data server"));
             }
         }
         /// <summary>
@@ -104,22 +101,19 @@ namespace TrueMarbleBiz
         /// returns num tiles down or -1 if failure
         /// aswell as a error message via reference
         /// </returns>
-        public int GetNumTilesDown(int zoom, out string errorMsg)
+        public int GetNumTilesDown(int zoom)
         {
             try
             {
-                int down = m_tmData.GetNumTilesDown(zoom, out errorMsg);
-                if (down == -1)
-                {
-                    Console.WriteLine(errorMsg);
-                }
-                return down;
+                return m_tmData.GetNumTilesDown(zoom);
             }
-            catch (CommunicationException e)
+            catch (FaultException<DataServerFault>)
             {
-                errorMsg = "Error: Retreiving NumTilesDown from Data Server\n";
-                Console.WriteLine(errorMsg + e.Message);
-                return -1;
+                throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.GetNumTilesDown", "Error In Data Server"));
+            }
+            catch (CommunicationException)
+            {
+                throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.GetNumTilesDown", "Error communicating with data server"));
             }
         }      
         /// <summary>
@@ -133,22 +127,19 @@ namespace TrueMarbleBiz
         /// byte array of raw tile jpg
         /// or null if error
         /// </returns>
-        public byte[] LoadTile(int zoom, int x, int y, out string errorMsg)
+        public byte[] LoadTile(int zoom, int x, int y)
         {
             try
             {
-                byte[] array = m_tmData.LoadTile(zoom, x, y, out errorMsg);
-                if (array == null)
-                {
-                    Console.WriteLine(errorMsg);
-                }
-                return array;
+                return m_tmData.LoadTile(zoom, x, y);
             }
-            catch (CommunicationException e)
+            catch (FaultException<DataServerFault> e1)
             {
-                errorMsg = "Error: Retreiving Tile from Data Server\n";
-                Console.WriteLine(errorMsg + e.Message);
-                return null;
+                throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.LoadTile", "An error occurred in the data tier"));
+            }
+            catch (CommunicationException e2)
+            {
+                throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.LoadTile", "Error communicating with Data Server"));
             }
         }
         /// <summary>
@@ -164,28 +155,17 @@ namespace TrueMarbleBiz
             bool verified = true;
             MemoryStream memoryStream;
             JpegBitmapDecoder decoder;
-            int across, down;
             try
             {
                 for (int zoom = 0; (zoom <= 6 && verified); zoom++)
                 {
-                    if ((across = m_tmData.GetNumTilesAcross(zoom, out string errMsg1)) == -1)
+                    for (int x = 0; (x < m_tmData.GetNumTilesAcross(zoom) - 1 && verified); x++)
                     {
-                        Console.WriteLine(errMsg1);
-                        return false;
-                    }
-                    if ((down = m_tmData.GetNumTilesDown(zoom, out string errMsg2)) == -1)
-                    {
-                        Console.WriteLine(errMsg2);
-                        return false;
-                    }
-                    for (int x = 0; (x < across - 1 && verified); x++)
-                    {
-                        for (int y = 0; (y < down - 1 && verified); y++)
+                        for (int y = 0; (y < m_tmData.GetNumTilesDown(zoom) - 1 && verified); y++)
                         {
                             try
                             {
-                                memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y, out string errMsg3));
+                                memoryStream = new MemoryStream(m_tmData.LoadTile(zoom, x, y));
                                 decoder = new JpegBitmapDecoder(memoryStream, BitmapCreateOptions.None, BitmapCacheOption.None);
                             }
                             catch (FileFormatException)  // if it fails it probably is corrupt
@@ -202,10 +182,10 @@ namespace TrueMarbleBiz
                     }
                 }
             }
-            catch (CommunicationException e2) // Data server is offline
+            catch (FaultException<DataServerFault> e) // Data server is offline
             {
-                Console.WriteLine("\nError: Communicating With Data Server, in Function 'VerifyTiles'\n" + e2.Message);
-                return false;// notify gui that tiles can't be verified
+                Console.WriteLine("\nError: Communicating With Data Server, in Function 'VerifyTiles'\n" + e.Detail.Message);
+                throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.VerifyTiles", e.Detail.Message));
             }
 
             return verified;

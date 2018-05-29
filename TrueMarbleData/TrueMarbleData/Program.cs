@@ -11,7 +11,6 @@ namespace TrueMarbleData
         {
             ServiceHost host = null;
             NetTcpBinding tcpBinding = new NetTcpBinding();
-            //TMDataControllerImpl tMDataControllerImpl = new TMDataControllerImpl();
             string url = "net.tcp://localhost:50001/TMData";
             TMDataControllerImpl tMDataController = new TMDataControllerImpl();
 

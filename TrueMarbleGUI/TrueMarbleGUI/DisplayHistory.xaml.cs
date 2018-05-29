@@ -21,10 +21,14 @@ namespace TrueMarbleGUI
     public partial class DisplayHistory : Window
     {
         private BrowseHistory m_history;
+        private HistEntry m_entry;
+
+        public HistEntry HistEntry { get { return m_entry; } }
 
         public DisplayHistory(BrowseHistory hist)
         {
             m_history = hist;
+            m_entry = null;
             InitializeComponent();
         }
 
@@ -58,7 +62,7 @@ namespace TrueMarbleGUI
         /// <param name="e"></param>
         private void IvwHistory_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // future functionality
+            m_entry = (HistEntry)e.AddedItems[0];
         }
 
         /// <summary>

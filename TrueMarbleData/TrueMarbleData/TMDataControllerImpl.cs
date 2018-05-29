@@ -32,26 +32,21 @@ namespace TrueMarbleData
         /// returns across or -1 if error
         /// aswell as a error message via reference
         /// </returns>
-        public int GetNumTilesAcross(int zoom, out string errorMsg)
+        public int GetNumTilesAcross(int zoom)
         {
-            errorMsg = null;
             try
             {
                 if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
                 {
-                    errorMsg = "Error in DLL Function 'GetNumTiles'\n";
-                    Console.WriteLine(errorMsg);
-                    return -1;  // error
+                    throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.GetNumTilesAcross'", "Invalid Zoom Parameter"));
                 }
                 return across;
             }
             catch (DllNotFoundException e)
             {
-                errorMsg = "Error: DLL Not found\n";
-                Console.WriteLine(errorMsg + e.Message);
-                return -1;
+                Console.WriteLine(e.Message);
+                throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.GetNumTilesAcross'", "TrueMarbleDLL.dll is missing"));
             }
-            
         }
         /// <summary>
         /// GetNumTilesDown
@@ -62,24 +57,20 @@ namespace TrueMarbleData
         /// returns down or -1 if error
         /// aswell as a error message via reference
         /// </returns>
-        public int GetNumTilesDown(int zoom, out string errorMsg)
+        public int GetNumTilesDown(int zoom)
         {
-            errorMsg = null;
             try
             {
                 if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
                 {
-                    errorMsg = "Error in DLL Function 'GetNumTiles'\n";
-                    Console.WriteLine(errorMsg);
-                    return -1;  // error
+                    throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.GetNumTilesDown'", "Invalid Zoom Parameter"));
                 }
                 return down;
             }
             catch (DllNotFoundException e)
             {
-                errorMsg = "Error: DLL Not found\n";
-                Console.WriteLine(errorMsg + e.Message);
-                return -1;
+                Console.WriteLine(e.Message);
+                throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.GetNumTilesDown'", "TrueMarbleDLL.dll is missing"));
             }
         }
         /// <summary>
@@ -91,24 +82,20 @@ namespace TrueMarbleData
         /// returns height or -1 if error
         /// aswell as a error message via reference
         /// </returns>
-        public int GetTileHeight(out string errorMsg)
+        public int GetTileHeight()
         {
-            errorMsg = null;
             try
             {
                 if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
                 {
-                    errorMsg = "Error in DLL Function 'GetTileSize'\n";
-                    Console.WriteLine(errorMsg);
-                    return -1;  // error
+                    throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.GetTileHeight'", "Returned error"));
                 }
                 return height;
             }
             catch (DllNotFoundException e)
             {
-                errorMsg = "Error in Function GetTileHeight\n";
-                Console.WriteLine(errorMsg + e.Message);
-                return -1;
+                Console.WriteLine(e.Message);
+                throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.GetTileHeight'", "TrueMarbleDLL.dll is missing"));
             }
         }
         /// <summary>
@@ -120,25 +107,20 @@ namespace TrueMarbleData
         /// returns width or -1 or error
         /// aswell as a error message via reference
         /// </return>
-        public int GetTileWidth(out string errorMsg)
+        public int GetTileWidth()
         {
-            errorMsg = null;
             try
             {
                 if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
                 {
-                    errorMsg = "Error in DLL Function 'GetTileSize'\n";
-                    Console.WriteLine(errorMsg);
-                    return -1;  // error
+                    throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.GetTileWidth'", "Returned error"));
                 }
-
                 return width;
             }
             catch (DllNotFoundException e)
             {
-                errorMsg = "Error in Function GetTileHeight\n";
-                Console.WriteLine(errorMsg + e.Message);
-                return -1;
+                Console.WriteLine(e.Message);
+                throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.GetTileWidth'", "TrueMarbleDLL.dll is missing"));
             }
         }
         /// <summary>
@@ -154,46 +136,32 @@ namespace TrueMarbleData
         /// aswell as a error message via reference
         /// </returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public byte[] LoadTile(int zoom, int x, int y, out string errMsg)
+        public byte[] LoadTile(int zoom, int x, int y)
         {
             int size;
             byte[] array = null;
-            errMsg = null;
             try
             {
-                if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)      // get height and width
-                {
-                    errMsg = "Error with DLL function 'GetTileSize'\n";
-                    Console.WriteLine(errMsg);
-                    return null;
-                }
+                if (TMDLLWrapper.GetTileSize(out int width, out int height) != 1)
+                    throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.LoadTile'", "Returned error"));
 
                 size = width * height * 3;  // determine size
                 array = new byte[size];     // allocate buffer
 
                 if (TMDLLWrapper.GetNumTiles(zoom, out int across, out int down) != 1)
-                {
-                    errMsg = "Error in DLL Function 'GetNumTiles'\n";
-                    Console.WriteLine(errMsg);
-                    return null;
-                }
+                    throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.LoadTile'", "Invalid Zoom Parameter"));
 
-                if ((x < across && y < down))// check if coordinates are valid
+                if (x < across && y < down)// check if coordinates are valid
                 {
                     if (TMDLLWrapper.GetTileImageAsRawJPG(zoom, x, y, array, size, ref size) != 1)
-                    {
-                        errMsg = "Error in DLL Function 'GetTileImageAsRawJPG'\n";
-                        Console.WriteLine(errMsg);
-                        return null;
-                    }
+                        throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.LoadTile'", "Error retrieving tiles"));
                 }
             }
             catch (DllNotFoundException e)
             {
-                errMsg = "Error in Function 'LoadTile'";
-                Console.WriteLine(errMsg + e.Message);
+                Console.WriteLine(e.Message);
+                throw new FaultException<DataServerFault>(new DataServerFault("Error in Function 'DGDataController.LoadTile'", "TrueMarbleDLL.dll is missing"));
             }
-
             return array;   // will be null if failure
         }
     }

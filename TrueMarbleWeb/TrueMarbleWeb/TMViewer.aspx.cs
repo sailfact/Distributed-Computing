@@ -19,8 +19,8 @@ public partial class _Default : Page
     protected void BtnSubmit_ServerClick(object sender, EventArgs e)
     {
         int zoom = Convert.ToInt32(txtZoom.Value);
-        int zoomPath = (int)(Math.Pow(2.0, (double)(zoom+1)));
-        
+        int zoomPath = (int)(Math.Pow(2.0, (double)(zoom + 1)));
+
         int xPath = Convert.ToInt32(txtX.Value);
         int yPath = Convert.ToInt32(txtY.Value);
 

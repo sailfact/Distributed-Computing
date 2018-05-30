@@ -13,7 +13,6 @@ public class TMTileServer : IHttpHandler, ITMBizControllerCallback
 
         NetTcpBinding tcpBinding = new NetTcpBinding();
         string url = "net.tcp://localhost:50002/TMBiz";
-
         tcpBinding.MaxReceivedMessageSize = System.Int32.MaxValue;
         tcpBinding.ReaderQuotas.MaxArrayLength = System.Int32.MaxValue;
 

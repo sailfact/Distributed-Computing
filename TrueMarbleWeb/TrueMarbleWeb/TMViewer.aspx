@@ -9,23 +9,23 @@
                     req = new XMLHttpRequest();
                 else
                     req = new ActiveXObject("Microsoft.XMLHTTP");
-
                 req.onreadystatechange = fnOnCompletion;
-                req.open("POST", "http://localhost/WebServices/TMWebService.svc", true);
+                req.open("POST", "/TrueMarbleWeb/TMWebService.svc", true);
                 // Perform call using simple CGI message format rather than SOAP
                 req.setRequestHeader("Content-Type", "text/xml");
-                req.setRequestHeader("SOAPAction", "http://tempuri.org/ITMWebService/GetNumTiles/GetNumAcross");
-
-                var sMsg = '<soap:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"> \
-                                <soap:Header> \
-                                    <Action soap:mustUnderstand="1" xmlns="http://schemas.microsoft.com/ws/2005/05/addressing/none">http://tempuri.org/ITMWebService/GetNumTilesAcross</Action> \
-                                </soap:Header>\
-                                <soap:Body> \
+                req.setRequestHeader("SOAPAction", "http://tempuri.org/ITMWebService/GetNumTilesAcross");
+                var sMsg = '<?xml version="1.0" encoding="utf-8"?> \
+                            <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"> \
+                                <s:Header> \
+                                    <Action s:mustUnderstand="1" xmlns="http://schemas.microsoft.com/ws/2005/05/addressing/none">http://tempuri.org/ITMWebService/GetNumTilesAcross</Action > \
+                                </s:Header> \
+                                <s:Body> \
                                     <GetNumTilesAcross xmlns="http://tempuri.org/"> \
                                         <zoom>'+ String(iZoom) + '</zoom> \
                                     </GetNumTilesAcross> \
-                                </soap:Body> \
-                            </soap:Envelope>';
+                                </s:Body> \
+                            </s:Envelope>';
+
                 req.send(sMsg);
             }
 
@@ -35,10 +35,16 @@
                         var ndResult = req.responseXML.documentElement.getElementsByTagName("GetNumTileXRPCAsync");
                         alert(req.responseText);
                     } else {
-                        alert("Asynchronous call failed. ResponseText was:\n" + req.responseText)
+                        alert("Asynchronous call failed. ResponseText was:\n" + req.status)
                     }
                     req = null;
                 }
+            }
+
+            function GetNumTileX() {
+                var iZoom = Number(document.getElementById("txtZoom").value);
+                alert(iZoom);
+                GetNumTileXRPCAsync(iZoom, fnOnComplete);
             }
         </script>
     </head>
@@ -48,7 +54,7 @@
                 <p>
                     <input id="txtX" type="hidden" runat="server" value="0"/>
                     <input id="txtY" type="hidden" runat="server"  value="0"/>
-                    ZOOM<input id="txtZoom" type="text" runat="server"/>
+                    ZOOM<input id="txtZoom" type="text" value="0" runat="server"/>
                     <input id="btnSubmit" type="button" value="Get Tile" runat="server" onserverclick="BtnSubmit_ServerClick"/>
                 </p>
                 <p>
@@ -59,6 +65,9 @@
                     <input id="btnRight" type="button" value=">" runat="server" onserverclick="BtnEast_ServerClick" />
                     <input id="btnNorth" type="button" value="/\" runat="server" onserverclick="BtnNorth_ServerClick" />
                     <input id="btnSouth" type="button" value="\/" runat="server" onserverclick="BtnSouth_ServerClick" />
+                </p>
+                <p>
+                    <input type="button" id="btnGetX" value="X" onclick="GetNumTileX();" />
                 </p>
 
             </div>

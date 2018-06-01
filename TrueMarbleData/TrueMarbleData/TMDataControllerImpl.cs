@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.ServiceModel;
+using System.Xml;
 
 namespace TrueMarbleData
 {
@@ -13,14 +14,25 @@ namespace TrueMarbleData
         UseSynchronizationContext = false)]
     internal class TMDataControllerImpl : ITMDataController
     {
-        private Dictionary<string, TileCoord>[] m_landMarks;
+        private Dictionary<string, TileCoord>[] m_landmarks;
         /// <summary>
         /// Constructor
         /// </summary>
         public TMDataControllerImpl()
         {
-            m_landMarks = new Dictionary<string, TileCoord>[6];
-            SetTable();
+            m_landmarks = new Dictionary<string, TileCoord>[6];
+            for (int i = 0; i < 6; i++)
+                m_landmarks[i] = new Dictionary<string, TileCoord>();
+
+            SetTable("Landmarks.xml");
+            for (int i = 0; i < 6; i++)
+            {
+                foreach (var item in m_landmarks[i])
+                {
+                    TileCoord tile = item.Value;
+                    Console.WriteLine("Name : {0}| X={1} Y={2}", item.Key, tile.x, tile.y);
+                } 
+            }
             Console.WriteLine("Server Created");
         }
 
@@ -28,30 +40,29 @@ namespace TrueMarbleData
         /// SetTable
         /// 
         /// </summary>
-        private void SetTable()
+        private void SetTable(string xmlFile)
         {
-            int pX = 69, pY = 28;
-            int aX = 74, aY = 29;
-            int mX = 76, mY = 30;
-            TileCoord coord;
-
-            for (int i = 0; i < 6; i++)
+            XmlDocument xDocument = new XmlDocument();
+            xDocument.Load(xmlFile);
+            string name;
+            int x;
+            int y;
+            
+            foreach (XmlNode node in xDocument.SelectNodes("Landmarks/Landmark"))
             {
-                coord.x = pX;
-                coord.y = pY;
-                m_landMarks[i].Add("Perth", coord);
-                coord.x = aX;
-                coord.y = aY;
-                m_landMarks[i].Add("Adelaide", coord);
-                coord.x = mX;
-                coord.y = mY;
-                m_landMarks[i].Add("Melbourne", coord);
-                aX = aX / 2;
-                aY = aY / 2;
-                pX = pX / 2;
-                pY = pY / 2;
-                mX = mX / 2;
-                mY = mY / 2;
+                name = node.SelectSingleNode("Name").InnerText;
+                x = Convert.ToInt32(node.SelectSingleNode("X").InnerText);
+                y = Convert.ToInt32(node.SelectSingleNode("Y").InnerText);
+
+                for (int i = 0; i < 6; i++)
+                {
+                    TileCoord tile;
+                    tile.x = x;
+                    tile.y = y;
+                    m_landmarks[i].Add(name, tile);
+                    x = (x-1) / 2;
+                    y = (y-1) / 2;
+                }
             }
         }
 
@@ -66,8 +77,8 @@ namespace TrueMarbleData
         /// <param name="y"></param>
         public void GetLandmarkCoords(string landmarkName, int zoom, out int x, out int y)
         {
-            x = m_landMarks[zoom][landmarkName].x;
-            y = m_landMarks[zoom][landmarkName].y;
+            x = m_landmarks[zoom][landmarkName].x;
+            y = m_landmarks[zoom][landmarkName].y;
         }
 
         /// <summary>
@@ -220,7 +231,7 @@ namespace TrueMarbleData
         {
             string[] names = new string[3];
             int i = 0;
-            foreach (var item in m_landMarks[0])
+            foreach (var item in m_landmarks[0])
             {
                 names[i] = item.Key;
                 i++;

@@ -87,7 +87,7 @@ namespace TrueMarbleBiz
             {
                 throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.GetNumTilesDown", "Error In Data Server"));
             }
-            catch (CommunicationException e)
+            catch (CommunicationException)
             {
                 throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.GetNumTilesAcross", "Error communicating with data server"));
             }
@@ -133,11 +133,11 @@ namespace TrueMarbleBiz
             {
                 return m_tmData.LoadTile(zoom, x, y);
             }
-            catch (FaultException<DataServerFault> e1)
+            catch (FaultException<DataServerFault>)
             {
                 throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.LoadTile", "An error occurred in the data tier"));
             }
-            catch (CommunicationException e2)
+            catch (CommunicationException)
             {
                 throw new FaultException<BizServerFault>(new BizServerFault("TMBizControllerImpl.LoadTile", "Error communicating with Data Server"));
             }

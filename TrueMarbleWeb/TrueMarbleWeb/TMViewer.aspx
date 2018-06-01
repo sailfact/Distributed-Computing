@@ -5,26 +5,28 @@
         <script>
             function GetNumTileXRPCAsync(iZoom, fnOnCompletion) {
                 req = null;
-                if (window.XMLHttpRequest != undefined)
+                if (window.XMLHttpRequest != undefined) {
                     req = new XMLHttpRequest();
-                else
+                } else {
                     req = new ActiveXObject("Microsoft.XMLHTTP");
+                }
                 req.onreadystatechange = fnOnCompletion;
-                req.open("POST", "/TrueMarbleWeb/TMWebService.svc", true);
+                req.open("POST", "TMWebService.svc", true);
                 // Perform call using simple CGI message format rather than SOAP
-                req.setRequestHeader("Content-Type", "text/xml");
-                req.setRequestHeader("SOAPAction", "http://tempuri.org/ITMWebService/GetNumTilesAcross");
+                try {
+                    req.setRequestHeader("Content-Type", "text/xml");
+                    req.setRequestHeader("SOAPAction", "http://tempuri.org/ITMWebService/GetNumTilesAcross");
+                } catch (e) {
+                    alert("Error Setting Request Header : " + e.message);
+                }
                 var sMsg = '<?xml version="1.0" encoding="utf-8"?> \
-                            <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"> \
-                                <s:Header> \
-                                    <Action s:mustUnderstand="1" xmlns="http://schemas.microsoft.com/ws/2005/05/addressing/none">http://tempuri.org/ITMWebService/GetNumTilesAcross</Action > \
-                                </s:Header> \
-                                <s:Body> \
+                            <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"> \
+                                <soap:Body> \
                                     <GetNumTilesAcross xmlns="http://tempuri.org/"> \
                                         <zoom>'+ String(iZoom) + '</zoom> \
                                     </GetNumTilesAcross> \
-                                </s:Body> \
-                            </s:Envelope>';
+                                </soap:Body> \
+                            </soap:Envelope>';
 
                 req.send(sMsg);
             }
@@ -32,10 +34,14 @@
             function fnOnComplete() {
                 if (req.readyState == 4) {
                     if (req.status == 200) {
-                        var ndResult = req.responseXML.documentElement.getElementsByTagName("GetNumTileXRPCAsync");
-                        alert(req.responseText);
+                        var xmlResponse = createXMLParser(req.responseText);
+                        var iNumTilesX = xmlResponse.documentElement.getElementsByTagName("GetNumTileXRPCAsync");
+
+                        var nd = req.responseXML.documentElement.getElementsByTagName("GetNumTilesAcrossResult");
+                        var num = Number(nd[0].childNodes[0].nodeValue);    // Get tag contents
+                        alert(num);
                     } else {
-                        alert("Asynchronous call failed. ResponseText was:\n" + req.status)
+                        alert("Asynchronous call failed. ResponseText was:\n" + req.responseText)
                     }
                     req = null;
                 }
@@ -43,8 +49,25 @@
 
             function GetNumTileX() {
                 var iZoom = Number(document.getElementById("txtZoom").value);
-                alert(iZoom);
                 GetNumTileXRPCAsync(iZoom, fnOnComplete);
+            }
+
+            function createXMLParser(xmlText) {
+                var xmlDoc;
+                try {
+                    if (window.DOMParser != undefined) {
+                        xmlParser = new DOMParser();
+                        xmlDoc = xmlParser.parseFromString(xmlText, "text/xml");
+                    } else {
+                        xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                        xmlDoc.async = false;
+                        xmlDoc.loadXML(xmlText);
+                    }
+                } catch (e) {
+                    alert("Failed to create XML parser. Error is:\n" + e.message);
+                }
+
+                return xmlDoc;
             }
         </script>
     </head>

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TrueMarbleData
 {
@@ -16,13 +13,63 @@ namespace TrueMarbleData
         UseSynchronizationContext = false)]
     internal class TMDataControllerImpl : ITMDataController
     {
+        private Dictionary<string, TileCoord>[] m_landMarks;
         /// <summary>
         /// Constructor
         /// </summary>
         public TMDataControllerImpl()
         {
+            m_landMarks = new Dictionary<string, TileCoord>[6];
+            SetTable();
             Console.WriteLine("Server Created");
         }
+
+        /// <summary>
+        /// SetTable
+        /// 
+        /// </summary>
+        private void SetTable()
+        {
+            int pX = 69, pY = 28;
+            int aX = 74, aY = 29;
+            int mX = 76, mY = 30;
+            TileCoord coord;
+
+            for (int i = 0; i < 6; i++)
+            {
+                coord.x = pX;
+                coord.y = pY;
+                m_landMarks[i].Add("Perth", coord);
+                coord.x = aX;
+                coord.y = aY;
+                m_landMarks[i].Add("Adelaide", coord);
+                coord.x = mX;
+                coord.y = mY;
+                m_landMarks[i].Add("Melbourne", coord);
+                aX = aX / 2;
+                aY = aY / 2;
+                pX = pX / 2;
+                pY = pY / 2;
+                mX = mX / 2;
+                mY = mY / 2;
+            }
+        }
+
+        /// <summary>
+        /// GetLandmarkCoords
+        /// gets the dictionary for the current zoom level
+        /// returns the x and y coords for the landmark
+        /// </summary>
+        /// <param name="landmarkName"></param>
+        /// <param name="zoom"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public void GetLandmarkCoords(string landmarkName, int zoom, out int x, out int y)
+        {
+            x = m_landMarks[zoom][landmarkName].x;
+            y = m_landMarks[zoom][landmarkName].y;
+        }
+
         /// <summary>
         /// GetNumTilesAcross
         /// returns number of tiles across depending on the level of zoom
@@ -164,5 +211,31 @@ namespace TrueMarbleData
             }
             return array;   // will be null if failure
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetLandMarkList()
+        {
+            string[] names = new string[3];
+            int i = 0;
+            foreach (var item in m_landMarks[0])
+            {
+                names[i] = item.Key;
+                i++;
+            }
+
+            return names;
+        }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    struct TileCoord
+    {
+        public int x;
+        public int y;
+    };
 }

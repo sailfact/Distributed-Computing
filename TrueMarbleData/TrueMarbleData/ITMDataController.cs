@@ -25,5 +25,11 @@ namespace TrueMarbleData
 
         [OperationContract]
         byte[] LoadTile(int zoom, int x, int y);
+
+        [OperationContract]
+        void GetLandmarkCoords(string landmarkName, int zoom, out int x, out int y);
+
+        [OperationContract]
+        string[] GetLandMarkList();
     }
 }
